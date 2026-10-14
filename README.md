@@ -32,7 +32,7 @@ Stack 3D — это аркадная игра, где нужно ставить 
 
 ## 🚀 Play
 
-Открой игру в браузере: [pom1dorka.github.io/stack3d](https://pom1dorka.github.io/stack3d)
+Открой игру в браузере: [kran1or.github.io/stack-]
 
 Или скачай `index.html` и просто открой его — всё работает без интернета.
 
@@ -52,11 +52,7 @@ Personal, non-commercial use only.
 It is forbidden to sell the game, claim it as your own, 
 or distribute modified versions without crediting the author.
 
-See [LICENSE.txt](LICENSE.txt) for full text.
-
-## 📸 Screenshots
-
-*(сюда можно добавить скриншоты игры)*
+See LICENSE.txt for full text.
 
 ---
 
