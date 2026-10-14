@@ -1,4 +1,5 @@
 # Stack 3D
+![Stack 3D](icon.png)
 
 🎮 Isometric block stacking game built with pure HTML5, CSS and JavaScript.
 
