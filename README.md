@@ -47,7 +47,7 @@ Stack 3D — это аркадная игра, где нужно ставить 
 
 ## 📜 License
 
-© 2026 Pom1dorka. All rights reserved.
+© 2026 Kran1or. All rights reserved.
 
 Personal, non-commercial use only. 
 It is forbidden to sell the game, claim it as your own, 
