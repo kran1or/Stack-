@@ -54,6 +54,8 @@ or distribute modified versions without crediting the author.
 
 See LICENSE.txt for full text.
 
+👉 **[PLAY STACK 3D](https://kran1or.github.io/Stack-/)** 👈
+
 ---
 
 Made with ❤️ by Kran1or
