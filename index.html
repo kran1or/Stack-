@@ -489,7 +489,7 @@
   <div id="modeLabel">CLASSIC</div>
   <div id="perfect" data-i18n="perfect">PERFECT!</div>
   <div id="hint" data-i18n="tapToPlace">TAP TO PLACE THE BLOCK</div>
-  <div id="version">v1.5.0</div>
+  <div id="version">v1.5.1</div>
   <button id="menuIcon" aria-label="Menu">☰</button>
   <div id="gameover">
     <h1 data-i18n="gameOver">GAME OVER</h1>
@@ -571,18 +571,13 @@
     }
     function applyLang() {
       document.documentElement.lang = currentLang;
-      // Все элементы с data-i18n
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         el.textContent = t(key);
       });
-      // Динамические надписи
       updateMenuUI();
       updateBestLabel();
       updateModeLabel();
-      document.querySelectorAll('.paletteItem').forEach(it => {
-        // названия палитр не переводим, они английские
-      });
     }
     function updateBestLabel() {
       bestEl.textContent = t('best') + ': ' + best;
@@ -591,11 +586,13 @@
       modeLabel.textContent = settings.mode.toUpperCase();
     }
 
-    // ===== Кубик на заставке =====
-    // (не используется, оставлено на всякий случай)
-
+    // ===== CHANGELOG =====
     const CHANGELOG = [
-      { version: '1.5.0', date: '2026-10-15', current: true, changes: [
+      { version: '1.5.1', date: '2026-10-15', current: true, changes: [
+        'Faster speed increase in SPEED mode (+0.15 per point)',
+        'Minor improvements'
+      ]},
+      { version: '1.5.0', date: '2026-10-15', changes: [
         'Language switch: English / Russian',
         'Orange menu theme',
         'Camera now rises from the 4th block'
@@ -977,7 +974,7 @@
       }
       score++;
       scoreEl.textContent = score;
-      if (settings.mode === 'speed') currentSpeed = 3.5 + score * 0.05;
+      if (settings.mode === 'speed') currentSpeed = 3.5 + score * 0.15;
       const targetCamY = Math.max(0, (blocks.length - 4) * blockHeight());
       cameraOffsetY += (targetCamY - cameraOffsetY) * 0.3;
       spawnBlock();
@@ -1045,18 +1042,14 @@
       document.querySelectorAll('.modeBtn[data-mode]').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.mode === settings.mode);
       });
-      // Локализованные тексты для toggle-кнопок
       toggleTimeBg.textContent = settings.timeBg ? t('timeBg') : t('timeBgOff');
       bgColorBtn.style.display = settings.timeBg ? 'block' : 'none';
       toggleParticles.textContent = settings.particles ? t('particles') : t('particlesOff');
       toggleSound.textContent = settings.sound ? t('sound') : t('soundOff');
-      // Подсветка активного языка
       langEn.classList.toggle('active', currentLang === 'en');
       langRu.classList.toggle('active', currentLang === 'ru');
-      // data-i18n тексты
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        // не трогаем toggle-кнопки и modeBtn — у них свои функции
         if (el === toggleTimeBg || el === toggleParticles || el === toggleSound) return;
         if (el.classList.contains('modeBtn') && el.dataset.mode) return;
         if (el === langEn || el === langRu) return;
@@ -1067,11 +1060,8 @@
     toggleParticles.addEventListener('click', () => { settings.particles = !settings.particles; saveSettings(); updateMenuUI(); });
     toggleSound.addEventListener('click', () => { settings.sound = !settings.sound; saveSettings(); updateMenuUI(); });
     clearLogBtn.addEventListener('click', () => { saveLog([]); renderLog(); });
-
-    // ===== Язык =====
     langEn.addEventListener('click', () => { currentLang = 'en'; settings.lang = 'en'; saveSettings(); applyLang(); updateMenuUI(); });
     langRu.addEventListener('click', () => { currentLang = 'ru'; settings.lang = 'ru'; saveSettings(); applyLang(); updateMenuUI(); });
-
     function renderPalette() {
       paletteGrid.innerHTML = BG_PALETTES.map((p, i) => `
         <div class="paletteItem ${i === settings.bgIndex ? 'selected' : ''}" data-idx="${i}">
