@@ -17,34 +17,22 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body {
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-      position: fixed;
-      inset: 0;
+      height: 100%; width: 100%;
+      overflow: hidden; position: fixed; inset: 0;
       background: #111;
       font-family: Impact, 'Arial Black', system-ui, sans-serif;
       touch-action: manipulation;
-      user-select: none;
-      -webkit-user-select: none;
+      user-select: none; -webkit-user-select: none;
       letter-spacing: 1px;
       -webkit-text-size-adjust: 100%;
     }
-    canvas {
-      display: block;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-    }
+    canvas { display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
     #leafCanvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 500;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 500;
     }
+
+    /* ====== New menu style (changelog-like) ====== */
     .fullscreen {
       position: fixed; inset: 0;
       display: none;
@@ -56,86 +44,101 @@
       padding-right: max(20px, env(safe-area-inset-right));
       overflow-y: auto;
       z-index: 150;
-      background: linear-gradient(180deg, #ff9500 0%, #c1121f 100%);
+      background: linear-gradient(180deg, #2b2b2b 0%, #1a1a1a 100%);
       -webkit-overflow-scrolling: touch;
     }
     .fullscreen.open { display: flex; }
     .fullscreen h1 {
-      font-size: clamp(32px, 8vw, 44px);
-      margin-bottom: 24px;
-      text-shadow: -4px -4px 0 #000, 4px -4px 0 #000, -4px 4px 0 #000, 4px 4px 0 #000;
+      font-size: clamp(30px, 7vw, 40px);
+      margin-bottom: 20px;
+      color: #ffd34d;
+      text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000;
     }
     .fullscreen .section {
       width: 100%;
       max-width: min(420px, 90vw);
-      background: rgba(0,0,0,0.3);
-      border-radius: 16px; padding: 18px; margin-bottom: 16px;
+      background: rgba(255,255,255,0.06);
+      border-left: 4px solid #ffd34d;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
       text-align: left;
     }
     .fullscreen .section h2 {
-      font-size: clamp(18px, 5vw, 22px);
-      margin-bottom: 12px; color: #ffd34d;
-      text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+      font-size: clamp(15px, 4.5vw, 18px);
+      margin-bottom: 10px;
+      color: #ffd34d;
     }
     .fullscreen .modeBtn {
       display: block; width: 100%;
-      padding: 14px 18px; margin-bottom: 8px;
-      border: none; border-radius: 30px;
-      background: rgba(255,255,255,0.18);
+      padding: 12px 16px; margin-bottom: 6px;
+      border: none; border-radius: 8px;
+      background: rgba(255,255,255,0.08);
       color: #fff;
       font-family: Impact, 'Arial Black', system-ui, sans-serif;
       letter-spacing: 1px;
-      font-size: clamp(14px, 4.5vw, 18px);
+      font-size: clamp(13px, 4vw, 16px);
       cursor: pointer; text-align: left;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
     }
-    .fullscreen .modeBtn.active { background: #ffd34d; color: #222; }
+    .fullscreen .modeBtn.active {
+      background: rgba(255, 211, 77, 0.18);
+      color: #ffd34d;
+      border-left-color: #ffd34d;
+    }
     .fullscreen .modeBtn:active { transform: scale(0.98); }
     .fullscreen .bigBtn {
       display: block; width: 100%;
       max-width: min(420px, 90vw);
-      padding: 20px 30px;
-      margin-bottom: 12px;
+      padding: 18px 28px;
+      margin-bottom: 10px;
       border: none; border-radius: 40px;
       background: #ffd34d; color: #222;
       font-family: Impact, 'Arial Black', system-ui, sans-serif;
       letter-spacing: 2px;
-      font-size: clamp(20px, 5.5vw, 26px);
+      font-size: clamp(18px, 5vw, 24px);
       cursor: pointer;
       box-shadow: 0 6px 16px rgba(0,0,0,0.5);
     }
     .fullscreen .bigBtn:active { transform: scale(0.97); background: #ffc107; }
     .fullscreen .closeBtn {
-      margin-top: 16px; padding: 14px 50px;
-      font-size: clamp(16px, 4.5vw, 20px);
+      margin-top: 14px; padding: 12px 44px;
+      font-size: clamp(15px, 4.5vw, 18px);
       font-family: Impact, 'Arial Black', system-ui, sans-serif;
-      letter-spacing: 2px; border: none; border-radius: 40px;
-      background: #e0e0e0; color: #222; cursor: pointer;
+      letter-spacing: 2px;
+      border: 2px solid #fff;
+      border-radius: 30px;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
     }
-    .fullscreen .closeBtn:active { transform: scale(0.96); }
-    .fullscreen .credit { margin-top: 12px; font-size: 12px; opacity: 0.75; }
+    .fullscreen .closeBtn:active { transform: scale(0.96); background: rgba(255,255,255,0.15); }
+    .fullscreen .credit { margin-top: 12px; font-size: 12px; opacity: 0.6; }
     .fullscreen .logList {
       max-height: 200px; overflow-y: auto;
-      font-size: 13px; font-family: monospace;
-      background: rgba(0,0,0,0.4);
-      padding: 10px; border-radius: 10px;
-      color: #fff; white-space: pre-wrap; line-height: 1.5;
+      font-size: 12px; font-family: monospace;
+      background: rgba(0,0,0,0.5);
+      padding: 10px; border-radius: 8px;
+      color: #ddd; white-space: pre-wrap; line-height: 1.5;
     }
     .fullscreen .hintText {
-      font-size: 14px;
+      font-size: 13px;
       font-family: system-ui, sans-serif;
       letter-spacing: 0;
-      opacity: 0.75;
-      margin-bottom: 16px;
+      opacity: 0.7;
+      margin-bottom: 14px;
       padding: 0 12px;
     }
+
+    /* ====== Start screen ====== */
     #start {
       position: fixed; inset: 0;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       background: linear-gradient(180deg, #ff9500 0%, #c1121f 100%);
       z-index: 100; transition: opacity 0.6s ease;
-      cursor: pointer;
-      padding: 20px;
+      cursor: pointer; padding: 20px;
     }
     #start.hidden { opacity: 0; pointer-events: none; }
     #logo {
@@ -163,6 +166,8 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.3; }
     }
+
+    /* ====== HUD ====== */
     #menuIcon {
       position: fixed;
       top: max(20px, env(safe-area-inset-top));
@@ -171,12 +176,9 @@
       border: 3px solid #fff;
       border-radius: 50%;
       background: rgba(0,0,0,0.35);
-      color: #fff;
-      font-size: 24px;
-      cursor: pointer;
-      z-index: 120;
-      display: none;
-      align-items: center; justify-content: center;
+      color: #fff; font-size: 24px;
+      cursor: pointer; z-index: 120;
+      display: none; align-items: center; justify-content: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       font-family: inherit;
     }
@@ -185,10 +187,8 @@
     #score {
       position: fixed;
       top: max(20px, env(safe-area-inset-top));
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: clamp(32px, 9vw, 48px);
-      color: #fff;
+      left: 50%; transform: translateX(-50%);
+      font-size: clamp(32px, 9vw, 48px); color: #fff;
       text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000, 0 4px 10px rgba(0,0,0,0.4);
       pointer-events: none; z-index: 5;
     }
@@ -196,8 +196,7 @@
       position: fixed;
       top: max(80px, calc(env(safe-area-inset-top) + 60px));
       right: max(20px, env(safe-area-inset-right));
-      font-size: clamp(14px, 4vw, 18px);
-      color: #fff;
+      font-size: clamp(14px, 4vw, 18px); color: #fff;
       text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
       pointer-events: none; z-index: 5;
     }
@@ -205,8 +204,7 @@
       position: fixed;
       top: max(110px, calc(env(safe-area-inset-top) + 90px));
       right: max(20px, env(safe-area-inset-right));
-      font-size: clamp(12px, 3.2vw, 14px);
-      color: #ffd34d;
+      font-size: clamp(12px, 3.2vw, 14px); color: #ffd34d;
       text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
       pointer-events: none; z-index: 5;
     }
@@ -214,18 +212,15 @@
       position: fixed;
       bottom: max(40px, env(safe-area-inset-bottom));
       left: 50%; transform: translateX(-50%);
-      color: #fff;
-      font-size: clamp(16px, 4.5vw, 20px);
+      color: #fff; font-size: clamp(16px, 4.5vw, 20px);
       text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
       pointer-events: none; text-align: center; z-index: 5;
-      padding: 0 12px;
-      width: 100%;
+      padding: 0 12px; width: 100%;
     }
     #perfect {
       position: fixed; top: 25%; left: 50%;
       transform: translate(-50%, -50%) scale(0.5);
-      font-size: clamp(40px, 12vw, 60px);
-      color: #fff;
+      font-size: clamp(40px, 12vw, 60px); color: #fff;
       text-shadow: -4px -4px 0 #000, 4px -4px 0 #000, -4px 4px 0 #000, 4px 4px 0 #000, 0 8px 16px rgba(0,0,0,0.5);
       opacity: 0; pointer-events: none; z-index: 5;
     }
@@ -244,16 +239,16 @@
       font-size: 11px;
       font-family: system-ui, sans-serif;
       letter-spacing: 0;
-      color: #fff;
-      opacity: 0.5;
+      color: #fff; opacity: 0.5;
       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-      pointer-events: none;
-      z-index: 200;
+      pointer-events: none; z-index: 200;
     }
+
+    /* ====== Game over ====== */
     #gameover {
       position: fixed; inset: 0; display: none;
       flex-direction: column; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.78); color: #fff; text-align: center;
+      background: rgba(0,0,0,0.8); color: #fff; text-align: center;
       padding: 20px; z-index: 10;
     }
     #gameover h1 {
@@ -278,9 +273,11 @@
     }
     #gameover button.secondary { background: #e0e0e0; }
     #gameover button:active { transform: scale(0.96); background: #ffc107; }
+
+    /* ====== Palette ====== */
     #paletteOverlay {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.7);
       opacity: 0; pointer-events: none;
       transition: opacity 0.3s ease;
       z-index: 400;
@@ -289,7 +286,7 @@
     }
     #paletteOverlay.open { opacity: 1; pointer-events: auto; }
     #paletteBox {
-      background: #1a1a1a;
+      background: linear-gradient(180deg, #2b2b2b 0%, #1a1a1a 100%);
       border-radius: 20px;
       padding: 24px;
       max-width: min(420px, 90vw); width: 100%;
@@ -299,8 +296,7 @@
     }
     #paletteOverlay.open #paletteBox { transform: scale(1); }
     #paletteBox h3 {
-      font-size: clamp(20px, 6vw, 26px);
-      color: #ffd34d;
+      font-size: clamp(20px, 6vw, 26px); color: #ffd34d;
       margin-bottom: 16px; text-align: center;
       text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
     }
@@ -323,8 +319,7 @@
     }
     .paletteItem .paletteName {
       position: absolute; bottom: 6px; left: 0; right: 0;
-      text-align: center; font-size: 12px;
-      color: #fff;
+      text-align: center; font-size: 12px; color: #fff;
       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
       letter-spacing: 0;
     }
@@ -336,6 +331,8 @@
       background: #ffd34d; color: #222; cursor: pointer;
     }
     #paletteClose:active { transform: scale(0.97); }
+
+    /* ====== Changelog panel ====== */
     #changelogOverlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.5);
@@ -362,8 +359,7 @@
     }
     #changelogPanel.open { transform: translateX(0); }
     #changelogPanel h2 {
-      font-size: clamp(24px, 7vw, 32px);
-      margin-bottom: 6px;
+      font-size: clamp(24px, 7vw, 32px); margin-bottom: 6px;
       color: #ffd34d;
       text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000;
     }
@@ -379,8 +375,8 @@
       margin-bottom: 12px;
     }
     #changelogPanel .ver.current {
-      border-left-color: #ff9500;
-      background: rgba(255, 149, 0, 0.12);
+      border-left-color: #4ec9a8;
+      background: rgba(78, 201, 168, 0.12);
     }
     #changelogPanel .ver h3 { font-size: clamp(15px, 4.5vw, 18px); margin-bottom: 4px; color: #fff; }
     #changelogPanel .ver .date {
@@ -399,15 +395,13 @@
     #changelogPanel .ver li::before {
       content: '▸'; position: absolute; left: 0; color: #ffd34d;
     }
-    #changelogPanel .ver.current li::before { color: #ff9500; }
+    #changelogPanel .ver.current li::before { color: #4ec9a8; }
     #changelogPanel .badge {
       display: inline-block;
-      background: #ff9500;
-      color: #2a1400;
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 10px;
-      margin-left: 8px;
+      background: #4ec9a8;
+      color: #0a2e26;
+      font-size: 11px; padding: 2px 8px;
+      border-radius: 10px; margin-left: 8px;
       font-family: system-ui, sans-serif; letter-spacing: 0;
     }
     #changelogClose {
@@ -421,10 +415,11 @@
       font-family: inherit;
     }
     #changelogClose:active { transform: scale(0.92); background: rgba(255,255,255,0.25); }
+
     @media (orientation: landscape) and (max-height: 500px) {
-      .fullscreen h1 { margin-bottom: 12px; font-size: clamp(24px, 5vw, 32px); }
-      .fullscreen .bigBtn { padding: 14px 24px; margin-bottom: 8px; }
-      .fullscreen .section { padding: 12px; margin-bottom: 10px; }
+      .fullscreen h1 { margin-bottom: 12px; font-size: clamp(24px, 5vw, 30px); }
+      .fullscreen .bigBtn { padding: 14px 22px; margin-bottom: 8px; }
+      .fullscreen .section { padding: 10px; margin-bottom: 8px; }
     }
   </style>
 </head>
@@ -435,6 +430,7 @@
     <div id="logo">STACK 3D</div>
     <div id="tapPrompt" data-i18n="tapToOpen">TAP TO OPEN MENU</div>
   </div>
+
   <div id="mainMenu" class="fullscreen">
     <h1>STACK 3D</h1>
     <button class="bigBtn" id="playBtn" data-i18n="play">PLAY</button>
@@ -442,10 +438,12 @@
     <button class="bigBtn" id="changelogBtn" data-i18n="changelog">CHANGELOG</button>
     <div class="credit">© 2026 kran1or. All rights reserved.</div>
   </div>
+
   <div id="modeMenu" class="fullscreen">
     <h1 data-i18n="selectMode">SELECT MODE</h1>
     <div class="hintText" data-i18n="chooseMode">Choose your game mode and press START</div>
     <div class="section">
+      <h2 data-i18n="modeHeader">MODE</h2>
       <button class="modeBtn" data-mode="classic" data-i18n="modeClassic">CLASSIC — fixed speed</button>
       <button class="modeBtn" data-mode="speed" data-i18n="modeSpeed">SPEED — gets faster over time</button>
       <button class="modeBtn" data-mode="hard" data-i18n="modeHard">HARD — smaller perfect zone</button>
@@ -453,6 +451,7 @@
     <button class="bigBtn" id="startGameBtn" data-i18n="start">START</button>
     <button class="closeBtn" id="modeMenuClose" data-i18n="back">BACK</button>
   </div>
+
   <div id="settingsMenu" class="fullscreen">
     <h1 data-i18n="settings">SETTINGS</h1>
     <div class="section">
@@ -463,7 +462,7 @@
     <div class="section">
       <h2 data-i18n="visual">VISUAL</h2>
       <button class="modeBtn" id="toggleTimeBg" data-i18n="timeBg">TIME BACKGROUND: ON</button>
-      <button class="modeBtn" id="bgColorBtn" style="display:none;" data-i18n="bgColor">BACKGROUND COLOR</button>
+      <button class="modeBtn" id="bgColorBtn" data-i18n="bgColor">BACKGROUND COLOR</button>
       <button class="modeBtn" id="toggleParticles" data-i18n="particles">PARTICLES: ON</button>
     </div>
     <div class="section">
@@ -477,6 +476,7 @@
     </div>
     <button class="closeBtn" id="settingsClose" data-i18n="back">BACK</button>
   </div>
+
   <div id="changelogOverlay"></div>
   <div id="changelogPanel">
     <button id="changelogClose">✕</button>
@@ -484,14 +484,16 @@
     <div class="sub" data-i18n="changelogSub">All updates of Stack 3D</div>
     <div id="changelogList"></div>
   </div>
+
   <canvas id="game"></canvas>
   <div id="score">0</div>
   <div id="best">BEST: 0</div>
   <div id="modeLabel">CLASSIC</div>
   <div id="perfect" data-i18n="perfect">PERFECT!</div>
   <div id="hint" data-i18n="tapToPlace">TAP TO PLACE THE BLOCK</div>
-  <div id="version">v1.5.1</div>
+  <div id="version">v1.5.2</div>
   <button id="menuIcon" aria-label="Menu">☰</button>
+
   <div id="gameover">
     <h1 data-i18n="gameOver">GAME OVER</h1>
     <p><span data-i18n="scoreLabel">SCORE</span>: <span id="finalScore">0</span></p>
@@ -501,6 +503,7 @@
       <button id="mainMenuBtn" class="secondary" type="button" data-i18n="mainMenu">MAIN MENU</button>
     </div>
   </div>
+
   <div id="paletteOverlay">
     <div id="paletteBox">
       <h3 data-i18n="chooseBg">CHOOSE BACKGROUND</h3>
@@ -508,6 +511,7 @@
       <button id="paletteClose" data-i18n="close">CLOSE</button>
     </div>
   </div>
+
   <script>
     // ===== ЯЗЫКИ =====
     const TRANSLATIONS = {
@@ -516,6 +520,7 @@
         play: 'PLAY', settings: 'SETTINGS', changelog: 'CHANGELOG',
         selectMode: 'SELECT MODE',
         chooseMode: 'Choose your game mode and press START',
+        modeHeader: 'MODE',
         modeClassic: 'CLASSIC — fixed speed',
         modeSpeed: 'SPEED — gets faster over time',
         modeHard: 'HARD — smaller perfect zone',
@@ -543,6 +548,7 @@
         play: 'ИГРАТЬ', settings: 'НАСТРОЙКИ', changelog: 'ИЗМЕНЕНИЯ',
         selectMode: 'ВЫБОР РЕЖИМА',
         chooseMode: 'Выбери режим и нажми СТАРТ',
+        modeHeader: 'РЕЖИМ',
         modeClassic: 'КЛАССИКА — постоянная скорость',
         modeSpeed: 'СКОРОСТЬ — ускоряется со временем',
         modeHard: 'СЛОЖНО — маленькая зона идеала',
@@ -580,16 +586,17 @@
       updateBestLabel();
       updateModeLabel();
     }
-    function updateBestLabel() {
-      bestEl.textContent = t('best') + ': ' + best;
-    }
-    function updateModeLabel() {
-      modeLabel.textContent = settings.mode.toUpperCase();
-    }
+    function updateBestLabel() { bestEl.textContent = t('best') + ': ' + best; }
+    function updateModeLabel() { modeLabel.textContent = settings.mode.toUpperCase(); }
 
     // ===== CHANGELOG =====
     const CHANGELOG = [
-      { version: '1.5.1', date: '2026-10-15', current: true, changes: [
+      { version: '1.5.2', date: '2026-10-15', current: true, changes: [
+        'Fixed BG colors — now works with time background off',
+        'New sounds (softer, more pleasant)',
+        'New menu design — same style as changelog'
+      ]},
+      { version: '1.5.1', date: '2026-10-15', changes: [
         'Faster speed increase in SPEED mode (+0.15 per point)',
         'Author name updated to kran1or'
       ]},
@@ -604,8 +611,7 @@
         'CHANGELOG is now a separate slide-in panel',
         'Added version label in bottom-right corner',
         'Added background color palette picker',
-        'Added responsive scaling for all screens and orientations',
-        'Added safe-area support (notches, home indicator)',
+        'Added responsive scaling for all screens',
         'All texts translated to English'
       ]},
       { version: '1.3.0', date: '2026-10-12', changes: [
@@ -787,6 +793,7 @@
     const paletteClose = document.getElementById('paletteClose');
     const langEn = document.getElementById('langEn');
     const langRu = document.getElementById('langRu');
+
     let gameStarted = false;
     let settings = { mode: 'classic', timeBg: true, bgIndex: 0, particles: true, sound: true, lang: 'en' };
     let W, H, dpr;
@@ -814,9 +821,7 @@
     resize();
     function loadSettings() {
       try { const raw = localStorage.getItem('stack3d_settings'); if (raw) Object.assign(settings, JSON.parse(raw)); } catch (e) {}
-      if (settings.lang === 'ru' || settings.lang === 'en') {
-        currentLang = settings.lang;
-      }
+      if (settings.lang === 'ru' || settings.lang === 'en') currentLang = settings.lang;
     }
     function saveSettings() { try { localStorage.setItem('stack3d_settings', JSON.stringify(settings)); } catch (e) {} }
     function loadBest() { try { return parseInt(localStorage.getItem('stack3d_best') || '0', 10) || 0; } catch (e) { return 0; } }
@@ -833,28 +838,58 @@
       if (!log.length) { logListEl.textContent = '— empty —'; return; }
       logListEl.textContent = log.map(e => `[${e.date}]  ${e.mode}  score=${e.score}  perfect=${e.perfect}`).join('\n');
     }
+
+    // ===== НОВЫЕ ЗВУКИ =====
     let audioCtx = null;
     function ensureAudio() {
       if (!settings.sound) return;
-      if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audioCtx = null; } }
+      if (!audioCtx) {
+        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        catch (e) { audioCtx = null; }
+      }
       if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     }
-    function beep(freq, duration, type, volume) {
+    function tone(freq, dur, type, vol, delay) {
       if (!settings.sound || !audioCtx) return;
-      try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type || 'square';
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(volume || 0.06, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {}
+      const t0 = audioCtx.currentTime + (delay || 0);
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type || 'sine';
+      osc.frequency.setValueAtTime(freq, t0);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(vol || 0.08, t0 + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(t0); osc.stop(t0 + dur + 0.05);
     }
-    function playDrop() { beep(220, 0.08, 'square', 0.06); }
-    function playPerfect() { beep(880, 0.12, 'sine', 0.10); setTimeout(() => beep(1320, 0.10, 'sine', 0.08), 60); }
-    function playCut() { beep(140, 0.06, 'sawtooth', 0.05); }
+    function playDrop() {
+      tone(180, 0.12, 'sine', 0.09);
+      tone(240, 0.08, 'sine', 0.05, 0.02);
+    }
+    function playPerfect() {
+      tone(523.25, 0.10, 'sine', 0.07);
+      tone(659.25, 0.10, 'sine', 0.07, 0.07);
+      tone(783.99, 0.10, 'sine', 0.07, 0.14);
+      tone(1046.5, 0.20, 'sine', 0.08, 0.21);
+    }
+    function playCut() {
+      if (!settings.sound || !audioCtx) return;
+      const t0 = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(400, t0);
+      osc.frequency.exponentialRampToValueAtTime(120, t0 + 0.08);
+      gain.gain.setValueAtTime(0.06, t0);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.09);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(t0); osc.stop(t0 + 0.1);
+    }
+    function playClick() {
+      tone(660, 0.05, 'square', 0.04);
+    }
+
+    // ===== ISO =====
     function iso(x, y, z) {
       const scale = ISO_SCALE;
       const sx = (x - y) * Math.cos(Math.PI / 6) * scale;
@@ -869,6 +904,8 @@
       const ca = hexToRgb(a), cb = hexToRgb(b);
       return `rgb(${Math.round(ca.r+(cb.r-ca.r)*t)},${Math.round(ca.g+(cb.g-ca.g)*t)},${Math.round(ca.b+(cb.b-ca.b)*t)})`;
     }
+
+    // ===== ИГРА =====
     let blocks, current, score, best, gameOver, cameraOffsetY, flashAlpha, patternIndex;
     let fallingPieces, particles, gameStartTime, perfectCount, currentSpeed;
     function getPerfectRange() { return settings.mode === 'hard' ? 12 : 25; }
@@ -1009,10 +1046,11 @@
       mainMenuEl.classList.add('open');
       menuIcon.classList.remove('show');
       playing = false;
+      playClick();
     }
-    function openPlay() { hideAllScreens(); modeMenuEl.classList.add('open'); }
-    function openSettings() { hideAllScreens(); renderLog(); updateMenuUI(); settingsMenuEl.classList.add('open'); }
-    function openChangelog() { changelogPanel.classList.add('open'); changelogOverlay.classList.add('open'); }
+    function openPlay() { hideAllScreens(); modeMenuEl.classList.add('open'); playClick(); }
+    function openSettings() { hideAllScreens(); renderLog(); updateMenuUI(); settingsMenuEl.classList.add('open'); playClick(); }
+    function openChangelog() { changelogPanel.classList.add('open'); changelogOverlay.classList.add('open'); playClick(); }
     playBtn.addEventListener('click', openPlay);
     playBtn.addEventListener('touchstart', (e) => { e.preventDefault(); openPlay(); }, { passive: false });
     settingsBtn.addEventListener('click', openSettings);
@@ -1032,19 +1070,20 @@
       startEl.classList.add('hidden');
       playing = true;
       menuIcon.classList.add('show');
+      playClick();
       init();
     }
     startGameBtn.addEventListener('click', (e) => { e.preventDefault(); startPlay(); });
     startGameBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startPlay(); }, { passive: false });
     document.querySelectorAll('.modeBtn[data-mode]').forEach(btn => {
-      btn.addEventListener('click', () => { settings.mode = btn.dataset.mode; saveSettings(); updateMenuUI(); });
+      btn.addEventListener('click', () => { settings.mode = btn.dataset.mode; saveSettings(); updateMenuUI(); playClick(); });
     });
     function updateMenuUI() {
       document.querySelectorAll('.modeBtn[data-mode]').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.mode === settings.mode);
       });
       toggleTimeBg.textContent = settings.timeBg ? t('timeBg') : t('timeBgOff');
-      bgColorBtn.style.display = settings.timeBg ? 'block' : 'none';
+      bgColorBtn.style.display = 'block'; // теперь всегда видна
       toggleParticles.textContent = settings.particles ? t('particles') : t('particlesOff');
       toggleSound.textContent = settings.sound ? t('sound') : t('soundOff');
       langEn.classList.toggle('active', currentLang === 'en');
@@ -1057,12 +1096,12 @@
         el.textContent = t(key);
       });
     }
-    toggleTimeBg.addEventListener('click', () => { settings.timeBg = !settings.timeBg; saveSettings(); updateMenuUI(); });
-    toggleParticles.addEventListener('click', () => { settings.particles = !settings.particles; saveSettings(); updateMenuUI(); });
-    toggleSound.addEventListener('click', () => { settings.sound = !settings.sound; saveSettings(); updateMenuUI(); });
-    clearLogBtn.addEventListener('click', () => { saveLog([]); renderLog(); });
-    langEn.addEventListener('click', () => { currentLang = 'en'; settings.lang = 'en'; saveSettings(); applyLang(); updateMenuUI(); });
-    langRu.addEventListener('click', () => { currentLang = 'ru'; settings.lang = 'ru'; saveSettings(); applyLang(); updateMenuUI(); });
+    toggleTimeBg.addEventListener('click', () => { settings.timeBg = !settings.timeBg; saveSettings(); updateMenuUI(); playClick(); });
+    toggleParticles.addEventListener('click', () => { settings.particles = !settings.particles; saveSettings(); updateMenuUI(); playClick(); });
+    toggleSound.addEventListener('click', () => { settings.sound = !settings.sound; saveSettings(); updateMenuUI(); playClick(); });
+    clearLogBtn.addEventListener('click', () => { saveLog([]); renderLog(); playClick(); });
+    langEn.addEventListener('click', () => { currentLang = 'en'; settings.lang = 'en'; saveSettings(); applyLang(); updateMenuUI(); playClick(); });
+    langRu.addEventListener('click', () => { currentLang = 'ru'; settings.lang = 'ru'; saveSettings(); applyLang(); updateMenuUI(); playClick(); });
     function renderPalette() {
       paletteGrid.innerHTML = BG_PALETTES.map((p, i) => `
         <div class="paletteItem ${i === settings.bgIndex ? 'selected' : ''}" data-idx="${i}">
@@ -1085,11 +1124,11 @@
     }
     function openPalette(e) {
       if (e) { e.preventDefault(); e.stopPropagation(); }
-      renderPalette(); paletteOverlay.classList.add('open');
+      renderPalette(); paletteOverlay.classList.add('open'); playClick();
     }
     function closePalette(e) {
       if (e) { e.preventDefault(); e.stopPropagation(); }
-      paletteOverlay.classList.remove('open');
+      paletteOverlay.classList.remove('open'); playClick();
     }
     bgColorBtn.addEventListener('click', openPalette);
     bgColorBtn.addEventListener('touchstart', openPalette, { passive: false });
@@ -1100,6 +1139,7 @@
       if (e) { e.preventDefault(); e.stopPropagation(); }
       changelogPanel.classList.remove('open');
       changelogOverlay.classList.remove('open');
+      playClick();
     }
     changelogClose.addEventListener('click', closeChangelog);
     changelogClose.addEventListener('touchstart', closeChangelog, { passive: false });
@@ -1167,6 +1207,7 @@
         if (t2 > 1 - (5 / 35)) t2 = (t2 - (1 - 5 / 35)) / (5 / 35);
         else t2 = 0;
       } else {
+        // Фон фиксирован на выбранном цвете
         fromIdx = settings.bgIndex; toIdx = settings.bgIndex; t2 = 0;
       }
       const topCol = lerpColor(BG_PALETTES[fromIdx].top, BG_PALETTES[toIdx].top, t2);
