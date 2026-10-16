@@ -29,7 +29,7 @@
     canvas { display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
     #leafCanvas {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 500;
+      pointer-events: none; z-index: 50;
     }
     .fullscreen {
       position: fixed; inset: 0;
@@ -121,6 +121,79 @@
       margin-bottom: 14px;
       padding: 0 12px;
     }
+    .achRow {
+      display: flex; align-items: center;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.06);
+      border-left: 4px solid #4ec9a8;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .achRow.locked {
+      border-left-color: #555;
+      opacity: 0.55;
+    }
+    .achRow .achIcon {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: rgba(255,211,77,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+    .achRow.locked .achIcon {
+      background: rgba(255,255,255,0.08);
+      filter: grayscale(1);
+    }
+    .achRow .achInfo { flex: 1; }
+    .achRow .achTitle {
+      font-size: 15px;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .achRow.unlocked .achTitle { color: #ffd34d; }
+    .achRow .achDesc {
+      font-size: 12px;
+      opacity: 0.65;
+      font-family: system-ui, sans-serif;
+      letter-spacing: 0;
+    }
+    #achPopup {
+      position: fixed;
+      top: max(20px, env(safe-area-inset-top));
+      left: 50%;
+      transform: translate(-50%, -220%);
+      width: min(400px, 92vw);
+      background: linear-gradient(180deg, #2b2b2b 0%, #1a1a1a 100%);
+      border: 3px solid #ffd34d;
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex; align-items: center;
+      gap: 14px;
+      z-index: 800;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+      transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.3, 1);
+      pointer-events: none;
+    }
+    #achPopup.show { transform: translate(-50%, 0); }
+    #achPopup .achIcon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: rgba(255,211,77,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+    #achPopup .achText { text-align: left; flex: 1; }
+    #achPopup .achLabel {
+      font-size: 11px;
+      color: #ffd34d;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+      font-family: system-ui, sans-serif;
+    }
+    #achPopup .achName { font-size: 18px; color: #fff; }
     #start {
       position: fixed; inset: 0;
       display: flex; flex-direction: column;
@@ -164,7 +237,7 @@
       border-radius: 50%;
       background: rgba(0,0,0,0.35);
       color: #fff; font-size: 24px;
-      cursor: pointer; z-index: 120;
+      cursor: pointer; z-index: 200;
       display: none; align-items: center; justify-content: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       font-family: inherit;
@@ -180,7 +253,7 @@
       border-radius: 50%;
       background: rgba(0,0,0,0.35);
       color: #fff; font-size: 22px;
-      cursor: pointer; z-index: 120;
+      cursor: pointer; z-index: 200;
       display: none; align-items: center; justify-content: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       font-family: inherit;
@@ -456,6 +529,14 @@
 <body>
   <canvas id="leafCanvas"></canvas>
 
+  <div id="achPopup">
+    <div class="achIcon">🏆</div>
+    <div class="achText">
+      <div class="achLabel">ACHIEVEMENT UNLOCKED</div>
+      <div class="achName" id="achPopupName">First Steps</div>
+    </div>
+  </div>
+
   <div id="start">
     <div id="logo">STACK 3D</div>
     <div id="tapPrompt" data-i18n="tapToOpen">TAP TO OPEN MENU</div>
@@ -465,6 +546,7 @@
     <h1>STACK 3D</h1>
     <button class="bigBtn" id="continueBtn" style="display:none;" data-i18n="continueGame">CONTINUE</button>
     <button class="bigBtn" id="playBtn" data-i18n="play">PLAY</button>
+    <button class="bigBtn" id="achievementsBtn" data-i18n="achievements">ACHIEVEMENTS</button>
     <button class="bigBtn" id="settingsBtn" data-i18n="settings">SETTINGS</button>
     <button class="bigBtn" id="changelogBtn" data-i18n="changelog">CHANGELOG</button>
     <div class="credit">© 2026 kran1or. All rights reserved.</div>
@@ -481,6 +563,12 @@
     </div>
     <button class="bigBtn" id="startGameBtn" data-i18n="start">START</button>
     <button class="closeBtn" id="modeMenuClose" data-i18n="back">BACK</button>
+  </div>
+
+  <div id="achievementsMenu" class="fullscreen">
+    <h1 data-i18n="achievements">ACHIEVEMENTS</h1>
+    <div id="achievementsList" style="width:100%; max-width:min(460px,92vw);"></div>
+    <button class="closeBtn" id="achievementsClose" data-i18n="back">BACK</button>
   </div>
 
   <div id="settingsMenu" class="fullscreen">
@@ -517,7 +605,7 @@
   <div id="modeLabel">CLASSIC</div>
   <div id="perfect" data-i18n="perfect">PERFECT!</div>
   <div id="hint" data-i18n="tapToPlace">TAP TO PLACE THE BLOCK</div>
-  <div id="version">v1.5.2</div>
+  <div id="version">v1.5.3-alpha</div>
   <button id="menuIcon" aria-label="Menu">☰</button>
   <button id="pauseIcon" aria-label="Pause">⏸</button>
 
@@ -552,6 +640,7 @@
         tapToOpen: 'TAP TO OPEN MENU',
         play: 'PLAY', settings: 'SETTINGS', changelog: 'CHANGELOG',
         continueGame: 'CONTINUE',
+        achievements: 'ACHIEVEMENTS',
         selectMode: 'SELECT MODE',
         chooseMode: 'Choose your game mode and press START',
         modeHeader: 'MODE',
@@ -574,12 +663,14 @@
         playAgain: 'PLAY AGAIN', mainMenu: 'MAIN MENU',
         chooseBg: 'CHOOSE BACKGROUND', close: 'CLOSE',
         best: 'BEST',
-        paused: 'PAUSED', resume: 'RESUME', restart: 'RESTART'
+        paused: 'PAUSED', resume: 'RESUME', restart: 'RESTART',
+        achUnlocked: 'ACHIEVEMENT UNLOCKED'
       },
       ru: {
         tapToOpen: 'НАЖМИ, ЧТОБЫ ОТКРЫТЬ МЕНЮ',
         play: 'ИГРАТЬ', settings: 'НАСТРОЙКИ', changelog: 'ИЗМЕНЕНИЯ',
         continueGame: 'ПРОДОЛЖИТЬ',
+        achievements: 'ДОСТИЖЕНИЯ',
         selectMode: 'ВЫБОР РЕЖИМА',
         chooseMode: 'Выбери режим и нажми СТАРТ',
         modeHeader: 'РЕЖИМ',
@@ -602,7 +693,8 @@
         playAgain: 'ЕЩЁ РАЗ', mainMenu: 'ГЛАВНОЕ МЕНЮ',
         chooseBg: 'ВЫБЕРИ ФОН', close: 'ЗАКРЫТЬ',
         best: 'РЕКОРД',
-        paused: 'ПАУЗА', resume: 'ПРОДОЛЖИТЬ', restart: 'ЗАНОВО'
+        paused: 'ПАУЗА', resume: 'ПРОДОЛЖИТЬ', restart: 'ЗАНОВО',
+        achUnlocked: 'ДОСТИЖЕНИЕ ОТКРЫТО'
       }
     };
     let currentLang = 'en';
@@ -610,24 +702,83 @@
       return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) || key;
     }
 
+    const ACHIEVEMENTS = [
+      { id: 'first', score: 10,   icon: '👶', en: 'First Steps',       ru: 'Первые шаги',          descEn: 'Reach 10 points',   descRu: 'Набери 10 очков' },
+      { id: 'pro',   score: 50,   icon: '⭐', en: 'Pro Player',        ru: 'Про-игрок',            descEn: 'Reach 50 points',   descRu: 'Набери 50 очков' },
+      { id: 'local', score: 100,  icon: '🌟', en: 'Local Celebrity',   ru: 'Местная знаменитость', descEn: 'Reach 100 points',  descRu: 'Набери 100 очков' },
+      { id: 'noth',  score: 200,  icon: '💪', en: 'Unstoppable',       ru: 'Ничего нипочём',       descEn: 'Reach 200 points',  descRu: 'Набери 200 очков' },
+      { id: 'hw',    score: 500,  icon: '📚', en: 'And Homework?',     ru: 'А уроки?',             descEn: 'Reach 500 points',  descRu: 'Набери 500 очков' },
+      { id: 'cyber', score: 1000, icon: '🎮', en: 'Cybersport',        ru: 'Киберспорт',           descEn: 'Reach 1000 points', descRu: 'Набери 1000 очков' },
+      { id: '????',  score: 2000, icon: '🌲', en: '????',              ru: '????',                 descEn: 'Reach 2000 points', descRu: 'Набери 2000 очков' }
+    ];
+    let unlocked = {};
+    function loadAchievements() {
+      try {
+        const raw = localStorage.getItem('stack3d_ach');
+        if (raw) unlocked = JSON.parse(raw) || {};
+      } catch (e) { unlocked = {}; }
+    }
+    function saveAchievements() {
+      try { localStorage.setItem('stack3d_ach', JSON.stringify(unlocked)); } catch (e) {}
+    }
+    function checkAchievements(currentScore) {
+      for (const a of ACHIEVEMENTS) {
+        if (currentScore >= a.score && !unlocked[a.id]) {
+          unlocked[a.id] = true;
+          saveAchievements();
+          showAchievementPopup(a);
+        }
+      }
+    }
+    function showAchievementPopup(a) {
+      const popup = document.getElementById('achPopup');
+      document.getElementById('achPopupName').textContent = currentLang === 'ru' ? a.ru : a.en;
+      popup.querySelector('.achIcon').textContent = a.icon;
+      popup.querySelector('.achLabel').textContent = t('achUnlocked');
+      popup.classList.add('show');
+      playAchievement();
+      clearTimeout(showAchievementPopup._t);
+      showAchievementPopup._t = setTimeout(() => {
+        popup.classList.remove('show');
+      }, 3000);
+    }
+    function renderAchievements() {
+      const list = document.getElementById('achievementsList');
+      const best = loadBest();
+      list.innerHTML = ACHIEVEMENTS.map(a => {
+        const isUnlocked = unlocked[a.id] || best >= a.score;
+        const name = currentLang === 'ru' ? a.ru : a.en;
+        const desc = currentLang === 'ru' ? a.descRu : a.descEn;
+        return `
+          <div class="achRow ${isUnlocked ? 'unlocked' : 'locked'}">
+            <div class="achIcon">${isUnlocked ? a.icon : '🔒'}</div>
+            <div class="achInfo">
+              <div class="achTitle">${name}</div>
+              <div class="achDesc">${desc}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
     const CHANGELOG = [
-      { version: '1.5.2', date: '2026-10-15', current: true,
+      { version: '1.5.3-alpha', date: '2026-10-16', current: true,
         changesEn: [
-          'Added PAUSE menu',
-          'Added AUTO-SAVE (last game continues after reopen)',
-          'Removed game log',
-          'Fixed BG colors — now works with time background off',
-          'New sounds (softer, more pleasant)',
-          'New menu design — same style as changelog'
+          'Added ACHIEVEMENTS (7 unlockable)',
+          'Achievement popups drop from top',
+          'Changelog translated (EN / RU)',
+          'Removed game log'
         ],
         changesRu: [
-          'Добавлена ПАУЗА',
-          'Добавлено АВТОСОХРАНЕНИЕ (последняя игра продолжается)',
-          'Убран лог игр',
-          'Исправлены цвета фона — теперь работают при выключенной смене',
-          'Новые звуки (мягче и приятнее)',
-          'Новый дизайн меню — в стиле changelog'
+          'Добавлены ДОСТИЖЕНИЯ (7 штук)',
+          'Уведомления о достижениях падают сверху',
+          'Перевод CHANGELOG (EN / RU)',
+          'Убран лог игр'
         ]
+      },
+      { version: '1.5.2', date: '2026-10-15',
+        changesEn: ['Added PAUSE menu','Added AUTO-SAVE','Removed game log','Fixed BG colors','New sounds','New menu design'],
+        changesRu: ['Добавлена ПАУЗА','Добавлено АВТОСОХРАНЕНИЕ','Убран лог','Исправлены цвета фона','Новые звуки','Новый дизайн меню']
       },
       { version: '1.5.1', date: '2026-10-15',
         changesEn: ['Faster speed increase in SPEED mode','Author name updated'],
@@ -691,6 +842,7 @@
     const startEl = document.getElementById('start');
     const mainMenuEl = document.getElementById('mainMenu');
     const modeMenuEl = document.getElementById('modeMenu');
+    const achievementsMenuEl = document.getElementById('achievementsMenu');
     const settingsMenuEl = document.getElementById('settingsMenu');
     const menuIcon = document.getElementById('menuIcon');
     const pauseIcon = document.getElementById('pauseIcon');
@@ -700,6 +852,8 @@
     const mainMenuPauseBtn = document.getElementById('mainMenuPauseBtn');
     const playBtn = document.getElementById('playBtn');
     const continueBtn = document.getElementById('continueBtn');
+    const achievementsBtn = document.getElementById('achievementsBtn');
+    const achievementsClose = document.getElementById('achievementsClose');
     const settingsBtn = document.getElementById('settingsBtn');
     const changelogBtn = document.getElementById('changelogBtn');
     const startGameBtn = document.getElementById('startGameBtn');
@@ -780,6 +934,7 @@
         el.textContent = t(key);
       });
       renderChangelog();
+      renderAchievements();
       updateMenuUI();
       updateBestLabel();
       updateModeLabel();
@@ -828,6 +983,11 @@
       osc.start(t0); osc.stop(t0 + 0.1);
     }
     function playClick() { tone(660, 0.05, 'square', 0.04); }
+    function playAchievement() {
+      tone(659.25, 0.12, 'sine', 0.08);
+      tone(880, 0.12, 'sine', 0.08, 0.10);
+      tone(1318.5, 0.25, 'sine', 0.09, 0.20);
+    }
 
     function iso(x, y, z) {
       const scale = ISO_SCALE;
@@ -983,6 +1143,7 @@
       cameraOffsetY += (targetCamY - cameraOffsetY) * 0.3;
       spawnBlock();
       saveGame();
+      checkAchievements(score);
     }
     function endGame() {
       gameOver = true;
@@ -995,6 +1156,7 @@
       playing = false;
       pauseIcon.classList.remove('show');
       menuIcon.classList.remove('show');
+      checkAchievements(score);
     }
     function restart() { init(); }
     window.restart = restart;
@@ -1036,6 +1198,7 @@
     function hideAllScreens() {
       mainMenuEl.classList.remove('open');
       modeMenuEl.classList.remove('open');
+      achievementsMenuEl.classList.remove('open');
       settingsMenuEl.classList.remove('open');
       paletteOverlay.classList.remove('open');
       changelogPanel.classList.remove('open');
@@ -1056,10 +1219,15 @@
       continueBtn.style.display = hasSave() ? 'block' : 'none';
     }
     function openPlay() { hideAllScreens(); modeMenuEl.classList.add('open'); playClick(); }
+    function openAchievements() { hideAllScreens(); renderAchievements(); achievementsMenuEl.classList.add('open'); playClick(); }
     function openSettings() { hideAllScreens(); updateMenuUI(); settingsMenuEl.classList.add('open'); playClick(); }
     function openChangelog() { changelogPanel.classList.add('open'); changelogOverlay.classList.add('open'); playClick(); }
     playBtn.addEventListener('click', openPlay);
     playBtn.addEventListener('touchstart', (e) => { e.preventDefault(); openPlay(); }, { passive: false });
+    achievementsBtn.addEventListener('click', openAchievements);
+    achievementsBtn.addEventListener('touchstart', (e) => { e.preventDefault(); openAchievements(); }, { passive: false });
+    achievementsClose.addEventListener('click', showMainMenu);
+    achievementsClose.addEventListener('touchstart', (e) => { e.preventDefault(); showMainMenu(); }, { passive: false });
     settingsBtn.addEventListener('click', openSettings);
     settingsBtn.addEventListener('touchstart', (e) => { e.preventDefault(); openSettings(); }, { passive: false });
     changelogBtn.addEventListener('click', openChangelog);
@@ -1434,6 +1602,7 @@
       if (gameoverEl.style.display === 'flex') return;
       if (mainMenuEl.classList.contains('open')) return;
       if (modeMenuEl.classList.contains('open')) return;
+      if (achievementsMenuEl.classList.contains('open')) return;
       if (settingsMenuEl.classList.contains('open')) return;
       if (changelogPanel.classList.contains('open')) return;
       if (paletteOverlay.classList.contains('open')) return;
@@ -1460,6 +1629,7 @@
     });
 
     loadSettings();
+    loadAchievements();
     updateMenuUI();
     applyLang();
     updateContinueButton();
