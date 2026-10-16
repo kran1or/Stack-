@@ -31,8 +31,6 @@
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none; z-index: 500;
     }
-
-    /* ====== Panels ====== */
     .fullscreen {
       position: fixed; inset: 0;
       display: none;
@@ -123,8 +121,6 @@
       margin-bottom: 14px;
       padding: 0 12px;
     }
-
-    /* ====== Achievements ====== */
     .achRow {
       display: flex; align-items: center;
       padding: 10px 12px;
@@ -163,8 +159,6 @@
       font-family: system-ui, sans-serif;
       letter-spacing: 0;
     }
-
-    /* ====== Achievement popup ====== */
     #achPopup {
       position: fixed;
       top: max(20px, env(safe-area-inset-top));
@@ -191,9 +185,7 @@
       font-size: 26px;
       flex-shrink: 0;
     }
-    #achPopup .achText {
-      text-align: left; flex: 1;
-    }
+    #achPopup .achText { text-align: left; flex: 1; }
     #achPopup .achLabel {
       font-size: 11px;
       color: #ffd34d;
@@ -201,12 +193,7 @@
       margin-bottom: 2px;
       font-family: system-ui, sans-serif;
     }
-    #achPopup .achName {
-      font-size: 18px;
-      color: #fff;
-    }
-
-    /* ====== Start screen ====== */
+    #achPopup .achName { font-size: 18px; color: #fff; }
     #start {
       position: fixed; inset: 0;
       display: flex; flex-direction: column;
@@ -241,8 +228,6 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.3; }
     }
-
-    /* ====== HUD ====== */
     #menuIcon {
       position: fixed;
       top: max(20px, env(safe-area-inset-top));
@@ -259,7 +244,6 @@
     }
     #menuIcon.show { display: flex; }
     #menuIcon:active { transform: scale(0.92); }
-
     #pauseIcon {
       position: fixed;
       top: max(20px, env(safe-area-inset-top));
@@ -276,7 +260,6 @@
     }
     #pauseIcon.show { display: flex; }
     #pauseIcon:active { transform: scale(0.92); }
-
     #score {
       position: fixed;
       top: max(20px, env(safe-area-inset-top));
@@ -336,8 +319,6 @@
       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
       pointer-events: none; z-index: 200;
     }
-
-    /* ====== Pause ====== */
     #pauseMenu {
       position: fixed; inset: 0;
       display: none;
@@ -372,8 +353,6 @@
     }
     #pauseMenu button.secondary { background: #e0e0e0; }
     #pauseMenu button:active { transform: scale(0.97); background: #ffc107; }
-
-    /* ====== Game over ====== */
     #gameover {
       position: fixed; inset: 0; display: none;
       flex-direction: column; align-items: center; justify-content: center;
@@ -402,8 +381,6 @@
     }
     #gameover button.secondary { background: #e0e0e0; }
     #gameover button:active { transform: scale(0.96); background: #ffc107; }
-
-    /* ====== Palette ====== */
     #paletteOverlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.7);
@@ -463,8 +440,6 @@
       background: #ffd34d; color: #222; cursor: pointer;
     }
     #paletteClose:active { transform: scale(0.97); }
-
-    /* ====== Changelog panel ====== */
     #changelogOverlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.5);
@@ -547,7 +522,6 @@
       font-family: inherit;
     }
     #changelogClose:active { transform: scale(0.92); background: rgba(255,255,255,0.25); }
-
     @media (orientation: landscape) and (max-height: 500px) {
       .fullscreen h1 { margin-bottom: 12px; font-size: clamp(24px, 5vw, 30px); }
       .fullscreen .bigBtn { padding: 14px 22px; margin-bottom: 8px; }
@@ -558,7 +532,6 @@
 <body>
   <canvas id="leafCanvas"></canvas>
 
-  <!-- Achievement popup -->
   <div id="achPopup">
     <div class="achIcon">🏆</div>
     <div class="achText">
@@ -635,7 +608,7 @@
   <div id="modeLabel">CLASSIC</div>
   <div id="perfect" data-i18n="perfect">PERFECT!</div>
   <div id="hint" data-i18n="tapToPlace">TAP TO PLACE THE BLOCK</div>
-  <div id="version">v1.5.3</div>
+  <div id="version">v1.5.3-fixed</div>
   <button id="menuIcon" aria-label="Menu">☰</button>
   <button id="pauseIcon" aria-label="Pause">⏸</button>
 
@@ -665,7 +638,6 @@
   </div>
 
   <script>
-    // ===== ЯЗЫКИ =====
     const TRANSLATIONS = {
       en: {
         tapToOpen: 'TAP TO OPEN MENU',
@@ -695,9 +667,7 @@
         chooseBg: 'CHOOSE BACKGROUND', close: 'CLOSE',
         best: 'BEST',
         paused: 'PAUSED', resume: 'RESUME', restart: 'RESTART',
-        unlocked: 'UNLOCKED', locked: 'LOCKED',
-        achUnlocked: 'ACHIEVEMENT UNLOCKED',
-        secretBg: 'Secret background unlocked!'
+        achUnlocked: 'ACHIEVEMENT UNLOCKED'
       },
       ru: {
         tapToOpen: 'НАЖМИ, ЧТОБЫ ОТКРЫТЬ МЕНЮ',
@@ -727,9 +697,7 @@
         chooseBg: 'ВЫБЕРИ ФОН', close: 'ЗАКРЫТЬ',
         best: 'РЕКОРД',
         paused: 'ПАУЗА', resume: 'ПРОДОЛЖИТЬ', restart: 'ЗАНОВО',
-        unlocked: 'ОТКРЫТО', locked: 'ЗАКРЫТО',
-        achUnlocked: 'ДОСТИЖЕНИЕ ОТКРЫТО',
-        secretBg: 'Секретный фон открыт!'
+        achUnlocked: 'ДОСТИЖЕНИЕ ОТКРЫТО'
       }
     };
     let currentLang = 'en';
@@ -737,15 +705,14 @@
       return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) || key;
     }
 
-    // ===== ДОСТИЖЕНИЯ =====
     const ACHIEVEMENTS = [
-      { id: 'first', score: 10,   icon: '👶', en: 'First Steps',          ru: 'Первые шаги',           descEn: 'Reach 10 points',   descRu: 'Набери 10 очков' },
-      { id: 'pro',   score: 50,   icon: '⭐', en: 'Pro Player',           ru: 'Про-игрок',             descEn: 'Reach 50 points',   descRu: 'Набери 50 очков' },
-      { id: 'local', score: 100,  icon: '🌟', en: 'Local Celebrity',      ru: 'Местная знаменитость',  descEn: 'Reach 100 points',  descRu: 'Набери 100 очков',   reward: 'starry' },
-      { id: 'noth',  score: 200,  icon: '💪', en: 'Unstoppable',          ru: 'Ничего нипочём',         descEn: 'Reach 200 points',  descRu: 'Набери 200 очков' },
-      { id: 'hw',    score: 500,  icon: '📚', en: 'And Homework?',        ru: 'А уроки?',               descEn: 'Reach 500 points',  descRu: 'Набери 500 очков' },
-      { id: 'cyber', score: 1000, icon: '🎮', en: 'Cybersport',           ru: 'Киберспорт',             descEn: 'Reach 1000 points', descRu: 'Набери 1000 очков',  reward: 'stickers' },
-      { id: '????',  score: 2000, icon: '🌲', en: '????',                 ru: '????',                   descEn: 'Reach 2000 points', descRu: 'Набери 2000 очков',  reward: 'forest' }
+      { id: 'first', score: 10,   icon: '👶', en: 'First Steps',       ru: 'Первые шаги',          descEn: 'Reach 10 points',   descRu: 'Набери 10 очков' },
+      { id: 'pro',   score: 50,   icon: '⭐', en: 'Pro Player',        ru: 'Про-игрок',            descEn: 'Reach 50 points',   descRu: 'Набери 50 очков' },
+      { id: 'local', score: 100,  icon: '🌟', en: 'Local Celebrity',   ru: 'Местная знаменитость', descEn: 'Reach 100 points',  descRu: 'Набери 100 очков',   reward: 'starry' },
+      { id: 'noth',  score: 200,  icon: '💪', en: 'Unstoppable',       ru: 'Ничего нипочём',       descEn: 'Reach 200 points',  descRu: 'Набери 200 очков' },
+      { id: 'hw',    score: 500,  icon: '📚', en: 'And Homework?',     ru: 'А уроки?',             descEn: 'Reach 500 points',  descRu: 'Набери 500 очков' },
+      { id: 'cyber', score: 1000, icon: '🎮', en: 'Cybersport',        ru: 'Киберспорт',           descEn: 'Reach 1000 points', descRu: 'Набери 1000 очков',  reward: 'stickers' },
+      { id: '????',  score: 2000, icon: '🌲', en: '????',              ru: '????',                 descEn: 'Reach 2000 points', descRu: 'Набери 2000 очков',  reward: 'forest' }
     ];
     let unlocked = {};
     function loadAchievements() {
@@ -758,23 +725,20 @@
       try { localStorage.setItem('stack3d_ach', JSON.stringify(unlocked)); } catch (e) {}
     }
     function checkAchievements(currentScore) {
-      let any = false;
       for (const a of ACHIEVEMENTS) {
         if (currentScore >= a.score && !unlocked[a.id]) {
           unlocked[a.id] = true;
           saveAchievements();
           showAchievementPopup(a);
-          any = true;
         }
       }
-      return any;
     }
     function showAchievementPopup(a) {
       const popup = document.getElementById('achPopup');
       document.getElementById('achPopupName').textContent = currentLang === 'ru' ? a.ru : a.en;
       popup.querySelector('.achIcon').textContent = a.icon;
+      popup.querySelector('.achLabel').textContent = t('achUnlocked');
       popup.classList.add('show');
-      // звук
       playAchievement();
       clearTimeout(showAchievementPopup._t);
       showAchievementPopup._t = setTimeout(() => {
@@ -800,20 +764,21 @@
       }).join('');
     }
 
-    // ===== CHANGELOG =====
     const CHANGELOG = [
-      { version: '1.5.3', date: '2026-10-15', current: true,
+      { version: '1.5.3-fixed', date: '2026-10-15', current: true,
         changesEn: [
-          'Added ACHIEVEMENTS (7 unlockable, including secret backgrounds)',
+          'Added ACHIEVEMENTS (7 unlockable)',
+          'Secret backgrounds: STARRY (100), STICKERS (1000), FOREST (2000)',
           'Achievement popups drop from top',
-          'Added CHANGELOG translation (EN / RU)',
+          'Changelog translated (EN / RU)',
           'Removed game log',
           'Yash1k joined as co-developer'
         ],
         changesRu: [
-          'Добавлены ДОСТИЖЕНИЯ (7 штук, включая секретные фоны)',
+          'Добавлены ДОСТИЖЕНИЯ (7 штук)',
+          'Секретные фоны: STARRY (100), STICKERS (1000), FOREST (2000)',
           'Уведомления о достижениях падают сверху',
-          'Добавлен перевод CHANGELOG (EN / RU)',
+          'Перевод CHANGELOG (EN / RU)',
           'Убран лог игр',
           'Yash1k присоединился как со-разработчик'
         ]
@@ -846,7 +811,7 @@
     function renderChangelog() {
       const list = document.getElementById('changelogList');
       list.innerHTML = CHANGELOG.map(v => {
-        const changes = (currentLang === 'ru' ? v.changesRu : v.changesEn) || v.changes || [];
+        const changes = (currentLang === 'ru' ? v.changesRu : v.changesEn) || [];
         return `
           <div class="ver ${v.current ? 'current' : ''}">
             <h3>v${v.version}${v.current ? '<span class="badge">CURRENT</span>' : ''}</h3>
@@ -857,7 +822,6 @@
       }).join('');
     }
 
-    // ===== ФОНЫ =====
     const BG_PALETTES = [
       { name: 'PINK',   top: '#e84a6f', bot: '#c73e63' },
       { name: 'TEAL',   top: '#4ec9a8', bot: '#2b8a72' },
@@ -874,10 +838,11 @@
     ];
     function isPaletteUnlocked(p) {
       if (!p.secret) return true;
-      return !!unlocked[ACHIEVEMENTS.find(a => a.reward === p.secret)?.id];
+      const ach = ACHIEVEMENTS.find(a => a.reward === p.secret);
+      if (!ach) return false;
+      return !!unlocked[ach.id] || loadBest() >= ach.score;
     }
 
-    // ===== DOM =====
     const canvas = document.getElementById('game');
     const ctx = canvas.getContext('2d');
     const scoreEl = document.getElementById('score');
@@ -956,7 +921,6 @@
     function loadBest() { try { return parseInt(localStorage.getItem('stack3d_best') || '0', 10) || 0; } catch (e) { return 0; } }
     function saveBest(v) { try { localStorage.setItem('stack3d_best', String(v)); } catch (e) {} }
 
-    // Автосохранение
     const SAVE_KEY = 'stack3d_lastgame';
     function saveGame() {
       try {
@@ -992,7 +956,6 @@
       updateModeLabel();
     }
 
-    // ===== ЗВУКИ =====
     let audioCtx = null;
     function ensureAudio() {
       if (!settings.sound) return;
@@ -1037,7 +1000,6 @@
     }
     function playClick() { tone(660, 0.05, 'square', 0.04); }
     function playAchievement() {
-      // Победный звук — три ноты
       tone(659.25, 0.12, 'sine', 0.08);
       tone(880, 0.12, 'sine', 0.08, 0.10);
       tone(1318.5, 0.25, 'sine', 0.09, 0.20);
@@ -1058,12 +1020,10 @@
       return `rgb(${Math.round(ca.r+(cb.r-ca.r)*t)},${Math.round(ca.g+(cb.g-ca.g)*t)},${Math.round(ca.b+(cb.b-ca.b)*t)})`;
     }
 
-    // ===== ИГРА =====
     let blocks, current, score, best, gameOver, cameraOffsetY, flashAlpha, patternIndex;
     let fallingPieces, particles, gameStartTime, perfectCount, currentSpeed;
     let paused = false;
     let playing = false;
-    let lastAchievementCheck = 0;
 
     function getPerfectRange() { return settings.mode === 'hard' ? 12 : 25; }
     function blockSize() { return 200 * ISO_SCALE / 0.55; }
@@ -1086,7 +1046,6 @@
       spawnBlock();
       clearSave();
     }
-
     function restoreGame(data) {
       blocks = data.blocks;
       current = data.current;
@@ -1200,7 +1159,6 @@
       cameraOffsetY += (targetCamY - cameraOffsetY) * 0.3;
       spawnBlock();
       saveGame();
-      // Проверка достижений на каждом ходу
       checkAchievements(score);
     }
     function endGame() {
@@ -1214,7 +1172,6 @@
       playing = false;
       pauseIcon.classList.remove('show');
       menuIcon.classList.remove('show');
-      // проверяем достижения на всякий случай ещё раз
       checkAchievements(score);
     }
     function restart() { init(); }
@@ -1223,7 +1180,6 @@
     restartBtn.addEventListener('click', onRestart);
     restartBtn.addEventListener('touchstart', onRestart, { passive: false });
 
-    // ===== Пауза =====
     function openPause() {
       if (gameOver || !playing) return;
       paused = true;
@@ -1368,36 +1324,34 @@
     langEn.addEventListener('click', () => { currentLang = 'en'; settings.lang = 'en'; saveSettings(); applyLang(); updateMenuUI(); playClick(); });
     langRu.addEventListener('click', () => { currentLang = 'ru'; settings.lang = 'ru'; saveSettings(); applyLang(); updateMenuUI(); playClick(); });
 
-    // ===== Палитра =====
     function renderPalette() {
       paletteGrid.innerHTML = BG_PALETTES.map((p, i) => {
-        const unlockedPal = isPaletteUnlocked(p);
-        if (!unlockedPal) return '';
+        if (!isPaletteUnlocked(p)) return '';
         const bg = `linear-gradient(180deg, ${p.top}, ${p.bot})`;
-        let stars = '';
+        let decor = '';
         if (p.secret === 'starry') {
-          stars = `<div class="paletteStars">${Array.from({length:12}).map(() => {
+          decor = `<div class="paletteStars">${Array.from({length:10}).map(() => {
             const x = Math.random()*100, y = Math.random()*100, s = 1+Math.random()*2;
             return `<div style="position:absolute; left:${x}%; top:${y}%; width:${s}px; height:${s}px; background:#fff; border-radius:50%; box-shadow:0 0 4px #fff;"></div>`;
           }).join('')}</div>`;
         }
         if (p.secret === 'stickers') {
           const emojis = ['💪','👍','😎'];
-          stars = `<div class="paletteStars">${Array.from({length:6}).map((_, k) => {
+          decor = `<div class="paletteStars">${Array.from({length:6}).map((_, k) => {
             const x = Math.random()*80, y = Math.random()*80;
-            return `<div style="position:absolute; left:${x}%; top:${y}%; font-size:20px; transform:rotate(${Math.random()*60-30}deg);">${emojis[k%3]}</div>`;
+            return `<div style="position:absolute; left:${x}%; top:${y}%; font-size:18px; transform:rotate(${Math.random()*60-30}deg);">${emojis[k%3]}</div>`;
           }).join('')}</div>`;
         }
         if (p.secret === 'forest') {
-          stars = `<div class="paletteStars">${Array.from({length:8}).map(() => {
+          decor = `<div class="paletteStars">${Array.from({length:6}).map(() => {
             const x = Math.random()*90, y = Math.random()*90;
-            return `<div style="position:absolute; left:${x}%; top:${y}%; font-size:18px;">🌲</div>`;
+            return `<div style="position:absolute; left:${x}%; top:${y}%; font-size:16px;">🌲</div>`;
           }).join('')}</div>`;
         }
         return `
           <div class="paletteItem ${i === settings.bgIndex ? 'selected' : ''}" data-idx="${i}">
             <div style="position:absolute; inset:0; background:${bg};"></div>
-            ${stars}
+            ${decor}
             <div class="paletteName">${p.name}</div>
           </div>
         `;
@@ -1440,7 +1394,6 @@
     changelogOverlay.addEventListener('click', closeChangelog);
     changelogOverlay.addEventListener('touchstart', closeChangelog, { passive: false });
 
-    // ===== Отрисовка =====
     function drawBox(cx, cy, z, sizeX, sizeY, color, alpha) {
       const h = blockHeight();
       const hx = sizeX / 2, hy = sizeY / 2;
@@ -1492,18 +1445,18 @@
         ctx.fillRect(top.x - b.w/2, top.y, b.w, bot.y - top.y + 100);
       }
     }
-    function drawSecretStars() {
-      // Рисуем поверх фона в секретных палитрах
+    let secretStars = null;
+    let secretStickers = null;
+    let secretTrees = null;
+    function drawSecret() {
       const p = BG_PALETTES[settings.bgIndex];
       if (!p || !p.secret) return;
       if (p.secret === 'starry') {
-        if (!drawSecretStars._stars) {
-          drawSecretStars._stars = Array.from({length:60}).map(() => ({
-            x: Math.random(), y: Math.random(), s: 0.5 + Math.random() * 1.5, a: 0.3 + Math.random() * 0.7
-          }));
-        }
+        if (!secretStars) secretStars = Array.from({length:80}).map(() => ({
+          x: Math.random(), y: Math.random(), s: 0.5 + Math.random() * 1.5, a: 0.4 + Math.random() * 0.6
+        }));
         ctx.save();
-        for (const s of drawSecretStars._stars) {
+        for (const s of secretStars) {
           ctx.globalAlpha = s.a;
           ctx.fillStyle = '#fff';
           ctx.beginPath();
@@ -1513,37 +1466,34 @@
         ctx.restore();
       }
       if (p.secret === 'stickers') {
-        if (!drawSecretStars._stickers) {
-          drawSecretStars._stickers = Array.from({length:12}).map(() => ({
-            x: Math.random(), y: Math.random(),
-            e: ['💪','👍','😎'][Math.floor(Math.random()*3)],
-            rot: Math.random() * Math.PI * 2
-          }));
-        }
+        if (!secretStickers) secretStickers = Array.from({length:14}).map(() => ({
+          x: Math.random(), y: Math.random(),
+          e: ['💪','👍','😎'][Math.floor(Math.random()*3)],
+          rot: Math.random() * Math.PI * 2,
+          size: 28 + Math.random() * 20
+        }));
         ctx.save();
-        ctx.font = '36px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        for (const s of drawSecretStars._stickers) {
+        for (const s of secretStickers) {
           ctx.save();
           ctx.translate(s.x * W, s.y * H);
           ctx.rotate(s.rot);
+          ctx.font = `${s.size}px sans-serif`;
           ctx.fillText(s.e, 0, 0);
           ctx.restore();
         }
         ctx.restore();
       }
       if (p.secret === 'forest') {
-        if (!drawSecretStars._trees) {
-          drawSecretStars._trees = Array.from({length:20}).map(() => ({
-            x: Math.random(), y: 0.3 + Math.random() * 0.7, s: 0.6 + Math.random() * 0.8
-          }));
-        }
+        if (!secretTrees) secretTrees = Array.from({length:24}).map(() => ({
+          x: Math.random(), y: 0.35 + Math.random() * 0.65, s: 0.6 + Math.random() * 1.0
+        }));
         ctx.save();
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
-        for (const s of drawSecretStars._trees) {
-          ctx.font = `${Math.floor(40 * s.s)}px sans-serif`;
+        for (const s of secretTrees) {
+          ctx.font = `${Math.floor(44 * s.s)}px sans-serif`;
           ctx.fillText('🌲', s.x * W, s.y * H);
         }
         ctx.restore();
@@ -1569,7 +1519,7 @@
       grd.addColorStop(1, botCol);
       ctx.fillStyle = grd;
       ctx.fillRect(0, 0, W, H);
-      drawSecretStars();
+      drawSecret();
       drawBackground();
       const camY = cameraOffsetY;
       const sorted = [...blocks];
@@ -1623,6 +1573,110 @@
     }
     function loop() { update(); draw(); requestAnimationFrame(loop); }
 
+    // ===== ЛИСТЬЯ =====
+    (function() {
+      const leafCanvas = document.getElementById('leafCanvas');
+      const lctx = leafCanvas.getContext('2d');
+      let LW = 0, LH = 0, ldpr = 1;
+      function leafResize() {
+        ldpr = window.devicePixelRatio || 1;
+        LW = window.innerWidth; LH = window.innerHeight;
+        leafCanvas.width = Math.round(LW * ldpr);
+        leafCanvas.height = Math.round(LH * ldpr);
+        leafCanvas.style.width = LW + 'px';
+        leafCanvas.style.height = LH + 'px';
+        lctx.setTransform(ldpr, 0, 0, ldpr, 0, 0);
+      }
+      leafResize();
+      window.addEventListener('resize', leafResize);
+      window.addEventListener('orientationchange', () => setTimeout(leafResize, 250));
+      const LEAF_COLORS = [
+        '#ff6b35','#ff9500','#ffd60a','#e74c3c','#c0392b',
+        '#d35400','#f39c12','#e67e22','#b8860b','#8b4513'
+      ];
+      const leaves = [];
+      const MAX_LEAVES = 30;
+      function makeLeaf(initial) {
+        return {
+          x: Math.random() * LW,
+          y: initial ? Math.random() * LH : -30 - Math.random() * 100,
+          size: 10 + Math.random() * 14,
+          rot: Math.random() * Math.PI * 2,
+          rotSpeed: (Math.random() - 0.5) * 0.04,
+          vy: 0.5 + Math.random() * 0.9,
+          vx: (Math.random() - 0.5) * 0.6,
+          sway: Math.random() * Math.PI * 2,
+          swaySpeed: 0.01 + Math.random() * 0.02,
+          swayAmp: 0.6 + Math.random() * 1.2,
+          color: LEAF_COLORS[(Math.random() * LEAF_COLORS.length) | 0],
+          alpha: 0.65 + Math.random() * 0.35,
+          type: Math.random() < 0.5 ? 'oval' : 'maple'
+        };
+      }
+      for (let i = 0; i < MAX_LEAVES; i++) leaves.push(makeLeaf(true));
+      function drawLeaf(l) {
+        lctx.save();
+        lctx.translate(l.x, l.y);
+        lctx.rotate(l.rot);
+        lctx.globalAlpha = l.alpha;
+        lctx.fillStyle = l.color;
+        if (l.type === 'oval') {
+          lctx.beginPath();
+          lctx.moveTo(0, -l.size);
+          lctx.bezierCurveTo(l.size*0.7, -l.size*0.6, l.size*0.7, l.size*0.6, 0, l.size);
+          lctx.bezierCurveTo(-l.size*0.7, l.size*0.6, -l.size*0.7, -l.size*0.6, 0, -l.size);
+          lctx.fill();
+          lctx.strokeStyle = 'rgba(0,0,0,0.25)';
+          lctx.lineWidth = 1;
+          lctx.beginPath();
+          lctx.moveTo(0, -l.size * 0.9);
+          lctx.lineTo(0, l.size * 0.9);
+          lctx.stroke();
+        } else {
+          const s = l.size;
+          lctx.beginPath();
+          for (let i = 0; i < 5; i++) {
+            const a = (i / 5) * Math.PI * 2 - Math.PI / 2;
+            const nextA = ((i + 1) / 5) * Math.PI * 2 - Math.PI / 2;
+            lctx.moveTo(0, 0);
+            lctx.lineTo(Math.cos(a) * s, Math.sin(a) * s);
+            lctx.lineTo(Math.cos((a + nextA) / 2) * s * 0.35, Math.sin((a + nextA) / 2) * s * 0.35);
+            lctx.closePath();
+          }
+          lctx.fill();
+          lctx.strokeStyle = 'rgba(0,0,0,0.3)';
+          lctx.lineWidth = 1.5;
+          lctx.beginPath();
+          lctx.moveTo(0, 0);
+          lctx.lineTo(0, s * 0.9);
+          lctx.stroke();
+        }
+        lctx.restore();
+      }
+      function leafLoop() {
+        if (playing) {
+          lctx.clearRect(0, 0, LW, LH);
+          requestAnimationFrame(leafLoop);
+          return;
+        }
+        lctx.clearRect(0, 0, LW, LH);
+        for (let i = 0; i < leaves.length; i++) {
+          const l = leaves[i];
+          l.sway += l.swaySpeed;
+          l.x += l.vx + Math.sin(l.sway) * l.swayAmp * 0.5;
+          l.y += l.vy;
+          l.rot += l.rotSpeed;
+          if (l.y > LH + 40 || l.x < -60 || l.x > LW + 60) {
+            leaves[i] = makeLeaf(false);
+          } else {
+            drawLeaf(l);
+          }
+        }
+        requestAnimationFrame(leafLoop);
+      }
+      leafLoop();
+    })();
+
     startEl.addEventListener('click', (e) => {
       e.preventDefault();
       startEl.classList.add('hidden');
@@ -1668,7 +1722,6 @@
       if (document.hidden && playing && !gameOver && blocks && blocks.length) saveGame();
     });
 
-    // ===== Запуск =====
     loadSettings();
     loadAchievements();
     updateMenuUI();
