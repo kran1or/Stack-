@@ -177,8 +177,8 @@ window.restart=restart;
 function onRestart(e){if(e){e.preventDefault();e.stopPropagation()}restart()}
 restartBtn.addEventListener('click',onRestart);restartBtn.addEventListener('touchstart',onRestart,{passive:false});
 function openPause(){if(gameOver||!playing)return;paused=true;pauseMenuEl.classList.add('open')}
-function closePause(){paused=false;pauseMenuEl.classList.remove('open')}
-function restartFromPause(){paused=false;pauseMenuEl.classList.remove('open');restart()}
+function closePause(){paused=false;pauseMenuEl.classList.remove('open');playing=true}
+function restartFromPause(){paused=false;pauseMenuEl.classList.remove('open');playing=true;restart()}
 function mainMenuFromPause(){paused=false;pauseMenuEl.classList.remove('open');showMainMenu()}
 pauseIcon.addEventListener('click',openPause);
 pauseIcon.addEventListener('touchstart',(e)=>{e.preventDefault();openPause()},{passive:false});
@@ -235,4 +235,4 @@ loadSettings();updateMenuUI();
 (function preload(){gameStartTime=performance.now();blocks=[];current=null;cameraOffsetY=0;flashAlpha=0;fallingPieces=[];particles=[];loop()})();
 </script>
 </body>
-</html> 
+</html>
