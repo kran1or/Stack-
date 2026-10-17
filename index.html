@@ -588,13 +588,13 @@
       background: #2a6fb0;
       color: #fff;
     }
-    .renderGrid {
+    .itemGrid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
       margin-bottom: 18px;
     }
-    .renderItem {
+    .renderItem, .bgItem {
       background: rgba(42,111,176,0.07);
       border: 3px solid transparent;
       border-radius: 12px;
@@ -604,31 +604,39 @@
       transition: transform 0.15s ease, border-color 0.2s;
       position: relative;
     }
-    .renderItem:active { transform: scale(0.96); }
-    .renderItem.owned { border-color: #4ec9a8; }
-    .renderItem.active {
+    .renderItem:active, .bgItem:active { transform: scale(0.96); }
+    .renderItem.owned, .bgItem.owned { border-color: #4ec9a8; }
+    .renderItem.active, .bgItem.active {
       border-color: #2a6fb0;
       box-shadow: 0 0 0 3px #a8d0f0, 0 0 20px rgba(42,111,176,0.5);
     }
-    .renderItem .renderPreview {
-      width: 60px; height: 60px;
+    .renderItem .renderPreview,
+    .bgItem .bgPreview {
+      width: 100%; height: 60px;
       margin: 0 auto 8px;
       display: flex; align-items: center; justify-content: center;
+      border-radius: 8px;
+      overflow: hidden;
     }
     .renderItem .renderPreview canvas { width: 60px; height: 60px; border-radius: 8px; }
-    .renderItem .renderName {
-      font-size: 14px;
+    .bgItem .bgPreview canvas { width: 100%; height: 100%; display: block; }
+    .renderItem .renderName,
+    .bgItem .bgName {
+      font-size: 13px;
       color: #222;
       margin-bottom: 4px;
       font-family: Impact, 'Arial Black', system-ui, sans-serif;
     }
-    .renderItem .renderPrice {
+    .renderItem .renderPrice,
+    .bgItem .bgPrice {
       font-size: 12px;
       color: #2a6fb0;
       font-family: system-ui, sans-serif;
     }
-    .renderItem.owned .renderPrice { color: #2f9e7f; }
-    .renderItem .renderSelected {
+    .renderItem.owned .renderPrice,
+    .bgItem.owned .bgPrice { color: #2f9e7f; }
+    .renderItem .renderSelected,
+    .bgItem .bgSelected {
       position: absolute; top: 4px; right: 6px;
       font-size: 11px; color: #2a6fb0;
       font-family: system-ui, sans-serif;
@@ -792,12 +800,6 @@
       <button class="modeBtn" id="langPl" data-i18n="langPl">POLISH</button>
     </div>
     <div class="section">
-      <h2 data-i18n="visual">VISUAL</h2>
-      <button class="modeBtn" id="toggleTimeBg" data-i18n="timeBg">TIME BACKGROUND: ON</button>
-      <button class="modeBtn" id="bgColorBtn" data-i18n="bgColor">BACKGROUND COLOR</button>
-      <button class="modeBtn" id="toggleParticles" data-i18n="particles">PARTICLES: ON</button>
-    </div>
-    <div class="section">
       <h2 data-i18n="audio">AUDIO</h2>
       <button class="modeBtn" id="toggleSound" data-i18n="sound">SOUND: ON</button>
     </div>
@@ -837,8 +839,9 @@
       <div class="shopCoins"><span class="coinDot"></span> <span id="shopCoinsValue">0</span></div>
       <div id="shopTabs">
         <button class="shopTab active" data-tab="renders">RENDERS</button>
+        <button class="shopTab" data-tab="backgrounds">BACKGROUNDS</button>
       </div>
-      <div class="renderGrid" id="renderGrid"></div>
+      <div class="itemGrid" id="itemGrid"></div>
       <button id="shopClose" data-i18n="close">CLOSE</button>
     </div>
   </div>
@@ -862,7 +865,7 @@
   <div id="modeLabel">CLASSIC</div>
   <div id="perfect" data-i18n="perfect">PERFECT!</div>
   <div id="hint" data-i18n="tapToPlace">TAP TO PLACE THE BLOCK</div>
-  <div id="version">v1.6.1</div>
+  <div id="version">v1.6.2</div>
   <button id="menuIcon" aria-label="Menu">☰</button>
   <div id="gameover">
     <h1 data-i18n="gameOver">GAME OVER</h1>
@@ -905,10 +908,6 @@
         modeHard: 'HARD — smaller perfect zone',
         start: 'START', back: 'BACK',
         language: 'LANGUAGE', langEn: 'ENGLISH', langRu: 'RUSSIAN', langPl: 'POLISH',
-        visual: 'VISUAL',
-        timeBg: 'TIME BACKGROUND: ON', timeBgOff: 'TIME BACKGROUND: OFF',
-        bgColor: 'BACKGROUND COLOR',
-        particles: 'PARTICLES: ON', particlesOff: 'PARTICLES: OFF',
         audio: 'AUDIO',
         sound: 'SOUND: ON', soundOff: 'SOUND: OFF',
         changelogSub: 'All updates of Stack 3D',
@@ -922,7 +921,8 @@
         achUnlocked: 'ACHIEVEMENT UNLOCKED',
         owned: 'OWNED', buy: 'BUY', selected: 'SELECTED',
         confirmTitle: 'BUY?', yes: 'YES', no: 'NO',
-        confirmBuy: 'Buy', confirmFor: 'for'
+        confirmBuy: 'Buy', confirmFor: 'for',
+        rendersTab: 'RENDERS', bgsTab: 'BACKGROUNDS', free: 'FREE'
       },
       ru: {
         play: 'ИГРАТЬ', settings: 'НАСТРОЙКИ', changelog: 'ИЗМЕНЕНИЯ',
@@ -935,10 +935,6 @@
         modeHard: 'СЛОЖНО — маленькая зона идеала',
         start: 'СТАРТ', back: 'НАЗАД',
         language: 'ЯЗЫК', langEn: 'АНГЛИЙСКИЙ', langRu: 'РУССКИЙ', langPl: 'ПОЛЬСКИЙ',
-        visual: 'ГРАФИКА',
-        timeBg: 'СМЕНА ФОНА: ВКЛ', timeBgOff: 'СМЕНА ФОНА: ВЫКЛ',
-        bgColor: 'ЦВЕТ ФОНА',
-        particles: 'ЧАСТИЦЫ: ВКЛ', particlesOff: 'ЧАСТИЦЫ: ВЫКЛ',
         audio: 'ЗВУК',
         sound: 'ЗВУК: ВКЛ', soundOff: 'ЗВУК: ВЫКЛ',
         changelogSub: 'Все обновления Stack 3D',
@@ -952,7 +948,8 @@
         achUnlocked: 'ДОСТИЖЕНИЕ ОТКРЫТО',
         owned: 'КУПЛЕНО', buy: 'КУПИТЬ', selected: 'ВЫБРАНО',
         confirmTitle: 'КУПИТЬ?', yes: 'ДА', no: 'НЕТ',
-        confirmBuy: 'Купить', confirmFor: 'за'
+        confirmBuy: 'Купить', confirmFor: 'за',
+        rendersTab: 'РЕНДЕРЫ', bgsTab: 'ФОНЫ', free: 'БЕСПЛАТНО'
       },
       pl: {
         play: 'GRAJ', settings: 'USTAWIENIA', changelog: 'ZMIANY',
@@ -965,10 +962,6 @@
         modeHard: 'TRUDNY — mniejsza strefa ideału',
         start: 'START', back: 'WRÓĆ',
         language: 'JĘZYK', langEn: 'ANGIELSKI', langRu: 'ROSYJSKI', langPl: 'POLSKI',
-        visual: 'WIDOK',
-        timeBg: 'ZMIANA TŁA: WŁ', timeBgOff: 'ZMIANA TŁA: WYŁ',
-        bgColor: 'KOLOR TŁA',
-        particles: 'CZĄSTECZKI: WŁ', particlesOff: 'CZĄSTECZKI: WYŁ',
         audio: 'DŹWIĘK',
         sound: 'DŹWIĘK: WŁ', soundOff: 'DŹWIĘK: WYŁ',
         changelogSub: 'Wszystkie aktualizacje Stack 3D',
@@ -982,7 +975,8 @@
         achUnlocked: 'OSIĄGNIĘCIE ODBLOKOWANE',
         owned: 'POSIADANE', buy: 'KUP', selected: 'WYBRANE',
         confirmTitle: 'KUPIĆ?', yes: 'TAK', no: 'NIE',
-        confirmBuy: 'Kup', confirmFor: 'za'
+        confirmBuy: 'Kup', confirmFor: 'za',
+        rendersTab: 'RENDERY', bgsTab: 'TŁA', free: 'ZA DARMO'
       }
     };
     let currentLang = 'en';
@@ -1008,13 +1002,20 @@
     function updateModeLabel() { if (typeof settings !== 'undefined' && modeLabel) modeLabel.textContent = settings.mode.toUpperCase(); }
 
     const ACHIEVEMENTS = [
-      { id: 'first', score: 10,   icon: '👶', titleEn: 'First Steps',      titleRu: 'Первые шаги',          titlePl: 'Pierwsze kroki',    descEn: 'Reach 10 points',   descRu: 'Набери 10 очков',   descPl: 'Zdobądź 10 punktów' },
-      { id: 'pro',   score: 50,   icon: '⭐', titleEn: 'Pro Player',        titleRu: 'Про-игрок',            titlePl: 'Pro gracz',         descEn: 'Reach 50 points',   descRu: 'Набери 50 очков',   descPl: 'Zdobądź 50 punktów' },
-      { id: 'local', score: 100,  icon: '🌟', titleEn: 'Local Celebrity',   titleRu: 'Местная знаменитость', titlePl: 'Lokalna gwiazda',   descEn: 'Reach 100 points',  descRu: 'Набери 100 очков',  descPl: 'Zdobądź 100 punktów' },
-      { id: 'noth',  score: 200,  icon: '💪', titleEn: 'Unstoppable',       titleRu: 'Ничего нипочём',       titlePl: 'Nie do zatrzymania',descEn: 'Reach 200 points',  descRu: 'Набери 200 очков',  descPl: 'Zdobądź 200 punktów' },
-      { id: 'hw',    score: 500,  icon: '📚', titleEn: 'And Homework?',     titleRu: 'А уроки?',             titlePl: 'A zadanie domowe?', descEn: 'Reach 500 points',  descRu: 'Набери 500 очков',  descPl: 'Zdobądź 500 punktów' },
-      { id: 'cyber', score: 1000, icon: '🎮', titleEn: 'Cybersport',        titleRu: 'Киберспорт',           titlePl: 'E-sport',           descEn: 'Reach 1000 points', descRu: 'Набери 1000 очков', descPl: 'Zdobądź 1000 punktów' },
-      { id: '????',  score: 2000, icon: '🌲', titleEn: '????',              titleRu: '????',                 titlePl: '????',              descEn: 'Reach 2000 points', descRu: 'Набери 2000 очков', descPl: 'Zdobądź 2000 punktów' }
+      { id: 'first', score: 10,   type: 'score', icon: '👶', titleEn: 'First Steps',      titleRu: 'Первые шаги',          titlePl: 'Pierwsze kroki',    descEn: 'Reach 10 points',   descRu: 'Набери 10 очков',   descPl: 'Zdobądź 10 punktów' },
+      { id: 'pro',   score: 50,   type: 'score', icon: '⭐', titleEn: 'Pro Player',        titleRu: 'Про-игрок',            titlePl: 'Pro gracz',         descEn: 'Reach 50 points',   descRu: 'Набери 50 очков',   descPl: 'Zdobądź 50 punktów' },
+      { id: 'local', score: 100,  type: 'score', icon: '🌟', titleEn: 'Local Celebrity',   titleRu: 'Местная знаменитость', titlePl: 'Lokalna gwiazda',   descEn: 'Reach 100 points',  descRu: 'Набери 100 очков',  descPl: 'Zdobądź 100 punktów' },
+      { id: 'noth',  score: 200,  type: 'score', icon: '💪', titleEn: 'No Problem',        titleRu: 'Всё нипочём',          titlePl: 'Wszystko gra',      descEn: 'Reach 200 points',  descRu: 'Набери 200 очков',  descPl: 'Zdobądź 200 punktów' },
+      { id: 'hw',    score: 500,  type: 'score', icon: '📚', titleEn: 'And Homework?',     titleRu: 'А уроки?',             titlePl: 'A zadanie domowe?', descEn: 'Reach 500 points',  descRu: 'Набери 500 очков',  descPl: 'Zdobądź 500 punktów' },
+      { id: 'cyber', score: 1000, type: 'score', icon: '🎮', titleEn: 'Cybersport',        titleRu: 'Киберспорт',           titlePl: 'E-sport',           descEn: 'Reach 1000 points', descRu: 'Набери 1000 очков', descPl: 'Zdobądź 1000 punktów' },
+      { id: 's2000', score: 2000, type: 'score', icon: '🌲', titleEn: '????',              titleRu: '????',                 titlePl: '????',              descEn: 'Reach 2000 points', descRu: 'Набери 2000 очков', descPl: 'Zdobądź 2000 punktów' },
+      { id: 'c10',   coins: 10,   type: 'coins', icon: '🍞', titleEn: 'For Croutons',      titleRu: 'На сухарики',          titlePl: 'Na grzanki',        descEn: 'Earn 10 coins',     descRu: 'Заработай 10 монет', descPl: 'Zdobądź 10 monet' },
+      { id: 'c50',   coins: 50,   type: 'coins', icon: '🪙', titleEn: 'First Savings',     titleRu: 'Первое накопление',    titlePl: 'Pierwsze oszczędności', descEn: 'Earn 50 coins',  descRu: 'Заработай 50 монет', descPl: 'Zdobądź 50 monet' },
+      { id: 'c100',  coins: 100,  type: 'coins', icon: '🔧', titleEn: 'Handyman',          titleRu: 'Подработник',          titlePl: 'Rzemieślnik',       descEn: 'Earn 100 coins',    descRu: 'Заработай 100 монет', descPl: 'Zdobądź 100 monet' },
+      { id: 'c500',  coins: 500,  type: 'coins', icon: '💼', titleEn: 'First Job',         titleRu: 'Первая работа',        titlePl: 'Pierwsza praca',    descEn: 'Earn 500 coins',    descRu: 'Заработай 500 монет', descPl: 'Zdobądź 500 monet' },
+      { id: 'c1000', coins: 1000, type: 'coins', icon: '💵', titleEn: 'In the Money',      titleRu: 'При деньгах',          titlePl: 'Przy pieniądzach',  descEn: 'Earn 1000 coins',   descRu: 'Заработай 1000 монет', descPl: 'Zdobądź 1000 monet' },
+      { id: 'c5000', coins: 5000, type: 'coins', icon: '🏆', titleEn: 'Rich Man',          titleRu: 'Богач',                titlePl: 'Bogacz',            descEn: 'Earn 5000 coins',   descRu: 'Заработай 5000 монет', descPl: 'Zdobądź 5000 monet' },
+      { id: 'c10000',coins: 10000,type: 'coins', icon: '👑', titleEn: 'Millionaire',       titleRu: 'Миллионер',            titlePl: 'Milioner',          descEn: 'Earn 10000 coins',  descRu: 'Заработай 10000 монет', descPl: 'Zdobądź 10000 monet' }
     ];
     let unlocked = {};
     function loadAchievements() {
@@ -1026,12 +1027,21 @@
     function saveAchievements() {
       try { localStorage.setItem('stack3d_ach', JSON.stringify(unlocked)); } catch (e) {}
     }
-    function checkAchievements(currentScore) {
+    function checkAchievements(currentScore, currentCoins) {
       for (const a of ACHIEVEMENTS) {
-        if (currentScore >= a.score && !unlocked[a.id]) {
-          unlocked[a.id] = true;
-          saveAchievements();
-          showAchievementPopup(a);
+        if (unlocked[a.id]) continue;
+        if (a.type === 'coins') {
+          if ((currentCoins || 0) >= a.coins) {
+            unlocked[a.id] = true;
+            saveAchievements();
+            showAchievementPopup(a);
+          }
+        } else {
+          if ((currentScore || 0) >= a.score) {
+            unlocked[a.id] = true;
+            saveAchievements();
+            showAchievementPopup(a);
+          }
         }
       }
     }
@@ -1052,8 +1062,14 @@
       const list = document.getElementById('achievementsList');
       if (!list) return;
       const best = loadBest();
+      const localCoins = (() => { try { return parseInt(localStorage.getItem('stack3d_coins') || '0', 10) || 0; } catch(e){return 0;} })();
       list.innerHTML = ACHIEVEMENTS.map(a => {
-        const isUnlocked = unlocked[a.id] || best >= a.score;
+        let isUnlocked;
+        if (a.type === 'coins') {
+          isUnlocked = unlocked[a.id] || localCoins >= a.coins;
+        } else {
+          isUnlocked = unlocked[a.id] || best >= a.score;
+        }
         const title = currentLang === 'ru' ? a.titleRu : (currentLang === 'pl' ? a.titlePl : a.titleEn);
         const desc = currentLang === 'ru' ? a.descRu : (currentLang === 'pl' ? a.descPl : a.descEn);
         return `
@@ -1069,90 +1085,97 @@
     }
 
     const CHANGELOG = [
-      { version: '1.6.1', date: '2026-10-17', current: true, changesEn: [
+      { version: '1.6.2', date: '2026-10-18', current: true, changesEn: [
+        'New achievements: coins-based (10 / 50 / 100 / 500 / 1000 / 5000 / 10000)',
+        'Achievement "Всё нипочём" fixed',
+        'Snowflakes optimized (only start screen, no rotation)',
+        'SHOP: new BACKGROUNDS tab',
+        'Old backgrounds free (except star ones — 5 coins)',
+        '8 new canvas-drawn animated backgrounds (50 coins)',
+        'Canvas previews for backgrounds and renders',
+        'Removed VISUAL section and TIME BACKGROUND from SETTINGS'
+      ], changesRu: [
+        'Новые достижения за монеты (10 / 50 / 100 / 500 / 1000 / 5000 / 10000)',
+        'Исправлено достижение "Всё нипочём"',
+        'Оптимизированы снежинки (только на заставке, без вращения)',
+        'МАГАЗИН: новая вкладка ФОНЫ',
+        'Старые фоны бесплатно (кроме звёздных — 5 монет)',
+        '8 новых анимированных канвас-фонов (50 монет)',
+        'Канвас-превью для фонов и рендеров',
+        'Убраны VISUAL и СМЕНА ФОНА из НАСТРОЕК'
+      ], changesPl: [
+        'Nowe osiągnięcia za monety (10 / 50 / 100 / 500 / 1000 / 5000 / 10000)',
+        'Naprawiono osiągnięcie "Всё нипочём"',
+        'Optymalizacja płatków śniegu',
+        'SKLEP: nowa zakładka TŁA',
+        'Stare tła za darmo (oprócz gwiezdnych — 5 monet)',
+        '8 nowych animowanych teł rysowanych na canvasie (50 monet)',
+        'Podglądy canvas dla teł i renderów',
+        'Usunięto sekcję WIDOK z USTAWIENIA'
+      ]},
+      { version: '1.6.1', date: '2026-10-17', changesEn: [
         'White winter theme (menus)',
-        'Leaves replaced with blue snowflakes (visible above menus)',
-        'Lightweight snowflakes (no shadowBlur) — smoother FPS',
-        'Coin emoji replaced with CSS gold circle (renders on all devices)',
-        'Removed backgrounds using stickers / trees / flowers: STICKERS, CANDY, FOREST2, ROSE, LAVENDER',
+        'Leaves replaced with blue snowflakes',
+        'Snowflakes only on start screen (reduced GPU load)',
+        '20 lightweight snowflakes (no shadowBlur, no rotation)',
+        'Coin emoji replaced with CSS gold circle',
+        'Removed backgrounds using stickers / trees / flowers',
         '12 backgrounds remaining',
+        'Fixed lag when opening menus',
         '"Happy winter!" title on start screen (not translated)',
         'Polish language added',
         'FPS setting removed'
       ], changesRu: [
         'Белая зимняя тема (меню)',
-        'Листья заменены синими снежинками (видны поверх меню)',
-        'Лёгкие снежинки (без shadowBlur) — плавнее FPS',
-        'Эмодзи монеты заменено CSS-кружком (рисуется на всех устройствах)',
-        'Убраны фоны со стикерами / деревьями / цветами: STICKERS, CANDY, FOREST2, ROSE, LAVENDER',
+        'Листья заменены синими снежинками',
+        'Снежинки только на заставке (меньше нагрузки)',
+        '20 лёгких снежинок (без shadowBlur и поворота)',
+        'Эмодзи монеты заменено CSS-кружком',
+        'Убраны фоны со стикерами / деревьями / цветами',
         'Осталось 12 фонов',
+        'Исправлены лаги при открытии меню',
         'Надпись "Happy winter!" на заставке (не переводится)',
         'Добавлен польский язык',
         'Убрана настройка FPS'
       ], changesPl: [
-        'Biały zimowy motyw (menu)',
-        'Liście zastąpione niebieskimi płatkami śniegu (widoczne nad menu)',
-        'Lekkie płatki śniegu (bez shadowBlur) — płynniejsze FPS',
-        'Emoji monety zastąpione okręgiem CSS (działa na wszystkich urządzeniach)',
-        'Usunięto tła z naklejkami / drzewami / kwiatami: STICKERS, CANDY, FOREST2, ROSE, LAVENDER',
+        'Biały zimowy motyw',
+        'Liście → niebieskie płatki śniegu',
+        'Płatki tylko na ekranie startowym',
+        '20 lekkich płatków',
+        'Emoji monety → okrąg CSS',
+        'Usunięto tła z naklejkami / drzewami / kwiatami',
         'Pozostało 12 teł',
-        'Napis "Happy winter!" na ekranie startowym (nie tłumaczony)',
+        'Naprawiono lagi',
+        'Napis "Happy winter!"',
         'Dodano język polski',
-        'Usunięto ustawienie FPS'
+        'Usunięto FPS'
       ]},
       { version: '1.6', date: '2026-10-16', changesEn: [
         'SHOP with RENDERS tab: Flat / Outline / Gradient / Sketch / Neon',
         'Coins economy: +1 per 10 points, +1 per PERFECT',
         'Achievements: 10 / 50 / 100 / 200 / 500 / 1000 / 2000 points',
-        'CREDITS screen in main menu',
-        'AUTO-SAVE — CONTINUE button',
+        'CREDITS screen', 'AUTO-SAVE — CONTINUE',
         'Camera rises after every block',
-        '17 background palettes (CITRUS removed)',
-        'NO INTERNET screen',
-        'LANGUAGE switch: EN / RU'
+        '17 backgrounds', 'NO INTERNET screen', 'EN / RU languages'
       ], changesRu: [
-        'МАГАЗИН с вкладкой RENDERS: Flat / Outline / Gradient / Sketch / Neon',
+        'МАГАЗИН с вкладкой RENDERS',
         'Монеты: +1 за 10 очков, +1 за PERFECT',
-        'Достижения: 10 / 50 / 100 / 200 / 500 / 1000 / 2000 очков',
-        'Экран CREDITS в главном меню',
-        'АВТОСОХРАНЕНИЕ — кнопка ПРОДОЛЖИТЬ',
+        'Достижения за очки',
+        'Экран CREDITS', 'АВТОСОХРАНЕНИЕ',
         'Камера поднимается после каждой плиты',
-        '17 фоновых палитр (CITRUS убран)',
-        'Экран NO INTERNET',
-        'Переключение языка: EN / RU'
+        '17 фонов', 'Экран NO INTERNET', 'EN / RU'
       ], changesPl: [
-        'SKLEP z zakładką RENDERS: Flat / Outline / Gradient / Sketch / Neon',
-        'Ekonomia monet: +1 za 10 punktów, +1 za PERFECT',
-        'Osiągnięcia: 10 / 50 / 100 / 200 / 500 / 1000 / 2000 punktów',
-        'Ekran CREDITS w menu głównym',
-        'AUTOSAVE — przycisk KONTYNUUJ',
-        'Kamera podnosi się po każdym bloku',
-        '17 palet tła (CITRUS usunięty)',
-        'Ekran NO INTERNET',
-        'Przełącznik języka: EN / RU'
+        'SKLEP z zakładką RENDERS',
+        'Monety',
+        'Osiągnięcia za punkty',
+        'CREDITS', 'AUTOSAVE',
+        'Kamera podnosi się',
+        '17 teł', 'NO INTERNET', 'EN / RU'
       ]},
-      { version: '1.5.1', date: '2026-10-16', changesEn: [
-        'Coins for score',
-        'Remade menu design',
-        'Internet connection required',
-        'New language — Russian',
-        'Achievements'
-      ], changesRu: [
-        'Монеты за очки',
-        'Новое меню',
-        'Нужен интернет',
-        'Новый язык — Русский',
-        'Достижения'
-      ], changesPl: [
-        'Monety za punkty',
-        'Nowy wygląd menu',
-        'Wymagane połączenie z internetem',
-        'Nowy język — rosyjski',
-        'Osiągnięcia'
-      ]},
-      { version: '1.5.0', date: '2026-10-15', changesEn: ['Orange menu theme'], changesRu: ['Оранжевая тема меню'], changesPl: ['Pomarańczowy motyw menu']},
-      { version: '1.4.0', date: '2026-10-14', changesEn: ['Restructured menu','SETTINGS separate','CHANGELOG slide-in panel'], changesRu: ['Переделано меню','НАСТРОЙКИ отдельно','CHANGELOG панель'], changesPl: ['Przebudowa menu','USTAWIENIA osobno','Panel ZMIANY']},
-      { version: '1.3.0', date: '2026-10-12', changesEn: ['Best score saving','Game Over screen'], changesRu: ['Сохранение рекорда','Экран проигрыша'], changesPl: ['Zapis rekordu','Ekran końca gry']},
+      { version: '1.5.1', date: '2026-10-16', changesEn: ['Coins for score','Remade menu','Internet required','Russian language','Achievements'], changesRu: ['Монеты','Новое меню','Интернет','Русский язык','Достижения'], changesPl: ['Monety','Nowe menu','Internet','Rosyjski','Osiągnięcia']},
+      { version: '1.5.0', date: '2026-10-15', changesEn: ['Orange menu theme'], changesRu: ['Оранжевая тема'], changesPl: ['Pomarańczowy motyw']},
+      { version: '1.4.0', date: '2026-10-14', changesEn: ['Restructured menu','SETTINGS separate','CHANGELOG panel'], changesRu: ['Переделано меню','НАСТРОЙКИ отдельно','CHANGELOG панель'], changesPl: ['Przebudowa menu','USTAWIENIA osobno','Panel ZMIANY']},
+      { version: '1.3.0', date: '2026-10-12', changesEn: ['Best score','Game Over'], changesRu: ['Рекорд','Проигрыш'], changesPl: ['Rekord','Koniec gry']},
       { version: '1.0.0', date: '2026-10-08', changesEn: ['Initial release'], changesRu: ['Первый релиз'], changesPl: ['Pierwsze wydanie']}
     ];
     function renderChangelog() {
@@ -1176,8 +1199,9 @@
     document.getElementById('version').textContent = 'v' + CHANGELOG[0].version;
 
     let playing = false;
+    let onStartScreen = true;
 
-    // ===== SNOWFLAKES (lightweight) =====
+    // ===== SNOWFLAKES (only on start screen) =====
     (function() {
       const leafCanvas = document.getElementById('leafCanvas');
       const lctx = leafCanvas.getContext('2d');
@@ -1195,78 +1219,234 @@
       window.addEventListener('resize', leafResize);
       window.addEventListener('orientationchange', () => setTimeout(leafResize, 250));
       const flakes = [];
-      const MAX_FLAKES = 30;
+      const MAX_FLAKES = 20;
       function makeFlake(initial) {
         return {
           x: Math.random() * LW,
           y: initial ? Math.random() * LH : -30 - Math.random() * 100,
           size: 7 + Math.random() * 11,
-          rot: Math.random() * Math.PI * 2,
-          rotSpeed: (Math.random() - 0.5) * 0.02,
-          vy: 0.5 + Math.random() * 1.2,
-          vx: (Math.random() - 0.5) * 0.8,
+          vy: 0.4 + Math.random() * 1.0,
+          vx: (Math.random() - 0.5) * 0.6,
           sway: Math.random() * Math.PI * 2,
           swaySpeed: 0.01 + Math.random() * 0.02,
-          swayAmp: 0.6 + Math.random() * 1.2,
+          swayAmp: 0.5 + Math.random() * 1.0,
           alpha: 0.55 + Math.random() * 0.4
         };
       }
       for (let i = 0; i < MAX_FLAKES; i++) flakes.push(makeFlake(true));
       function drawFlake(f) {
-        lctx.save();
-        lctx.translate(f.x, f.y);
-        lctx.rotate(f.rot);
         lctx.globalAlpha = f.alpha;
         lctx.strokeStyle = '#1b4f87';
-        lctx.lineWidth = 1.2;
+        lctx.lineWidth = 1;
         const r = f.size / 2;
         lctx.beginPath();
         for (let i = 0; i < 6; i++) {
           const a = (i / 6) * Math.PI * 2;
-          lctx.moveTo(0, 0);
-          lctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+          lctx.moveTo(f.x, f.y);
+          lctx.lineTo(f.x + Math.cos(a) * r, f.y + Math.sin(a) * r);
         }
         lctx.stroke();
-        lctx.restore();
       }
       function leafLoop() {
-        if (playing) {
-          lctx.clearRect(0, 0, LW, LH);
+        if (!onStartScreen) {
+          if (lctx.__dirty !== false) {
+            lctx.clearRect(0, 0, LW, LH);
+            lctx.__dirty = false;
+          }
           requestAnimationFrame(leafLoop);
           return;
         }
+        lctx.__dirty = true;
         lctx.clearRect(0, 0, LW, LH);
         for (let i = 0; i < flakes.length; i++) {
           const f = flakes[i];
           f.sway += f.swaySpeed;
           f.x += f.vx + Math.sin(f.sway) * f.swayAmp * 0.5;
           f.y += f.vy;
-          f.rot += f.rotSpeed;
           if (f.y > LH + 40 || f.x < -60 || f.x > LW + 60) {
             flakes[i] = makeFlake(false);
           } else {
             drawFlake(f);
           }
         }
+        lctx.globalAlpha = 1;
         requestAnimationFrame(leafLoop);
       }
       leafLoop();
     })();
 
+    // ===== BACKGROUNDS =====
+    // gradient backgrounds: free unless `paid: true` (stars ones)
     const BG_PALETTES = [
-      { name: 'PINK',      top: '#e84a6f', bot: '#c73e63' },
-      { name: 'TEAL',      top: '#4ec9a8', bot: '#2b8a72' },
-      { name: 'PURPLE',    top: '#bf5af2', bot: '#5a189a' },
-      { name: 'SUNSET',    top: '#ff9500', bot: '#c1121f' },
-      { name: 'OCEAN',     top: '#3498db', bot: '#1c5c8a' },
-      { name: 'FOREST',    top: '#27ae60', bot: '#145a32' },
-      { name: 'NIGHT',     top: '#2c3e50', bot: '#000000' },
-      { name: 'GOLD',      top: '#ffd700', bot: '#b8860b' },
-      { name: 'MINT',      top: '#a8e6cf', bot: '#3bb78f' },
-      { name: 'STARRY',    top: '#0a1a4a', bot: '#020818', decor: 'stars' },
-      { name: 'MAGIC',     top: '#8338ec', bot: '#3a0ca3', decor: 'stars' },
-      { name: 'AURORA',    top: '#00f5d4', bot: '#3a0ca3', decor: 'stars' }
+      { id: 'pink',   name: 'PINK',   type: 'gradient', top: '#e84a6f', bot: '#c73e63', price: 0 },
+      { id: 'teal',   name: 'TEAL',   type: 'gradient', top: '#4ec9a8', bot: '#2b8a72', price: 0 },
+      { id: 'purple', name: 'PURPLE', type: 'gradient', top: '#bf5af2', bot: '#5a189a', price: 0 },
+      { id: 'sunset', name: 'SUNSET', type: 'gradient', top: '#ff9500', bot: '#c1121f', price: 0 },
+      { id: 'ocean',  name: 'OCEAN',  type: 'gradient', top: '#3498db', bot: '#1c5c8a', price: 0 },
+      { id: 'forest', name: 'FOREST', type: 'gradient', top: '#27ae60', bot: '#145a32', price: 0 },
+      { id: 'night',  name: 'NIGHT',  type: 'gradient', top: '#2c3e50', bot: '#000000', price: 0 },
+      { id: 'gold',   name: 'GOLD',   type: 'gradient', top: '#ffd700', bot: '#b8860b', price: 0 },
+      { id: 'mint',   name: 'MINT',   type: 'gradient', top: '#a8e6cf', bot: '#3bb78f', price: 0 },
+      { id: 'starry', name: 'STARRY', type: 'stars',    top: '#0a1a4a', bot: '#020818', price: 5 },
+      { id: 'magic',  name: 'MAGIC',  type: 'stars',    top: '#8338ec', bot: '#3a0ca3', price: 5 },
+      { id: 'aurora', name: 'AURORA', type: 'stars',    top: '#00f5d4', bot: '#3a0ca3', price: 5 },
+      // new canvas backgrounds (50 coins each)
+      { id: 'auroraWave',  name: 'AURORA WAVE',  type: 'canvas', draw: drawAuroraWave,  price: 50, c1: '#00f5d4', c2: '#3a0ca3' },
+      { id: 'oceanRipple', name: 'OCEAN RIPPLE', type: 'canvas', draw: drawOceanRipple, price: 50, c1: '#3498db', c2: '#1c5c8a' },
+      { id: 'sunsetHills', name: 'SUNSET HILLS', type: 'canvas', draw: drawSunsetHills, price: 50, c1: '#ff9500', c2: '#c1121f' },
+      { id: 'forestMist',  name: 'FOREST MIST',  type: 'canvas', draw: drawForestMist,  price: 50, c1: '#27ae60', c2: '#145a32' },
+      { id: 'neonGrid',    name: 'NEON GRID',    type: 'canvas', draw: drawNeonGrid,    price: 50, c1: '#ff2d95', c2: '#2a0a4a' },
+      { id: 'galaxySpin',  name: 'GALAXY SPIN',  type: 'canvas', draw: drawGalaxySpin,  price: 50, c1: '#8338ec', c2: '#020818' },
+      { id: 'fireflies',   name: 'FIREFLIES',    type: 'canvas', draw: drawFireflies,   price: 50, c1: '#1a3a15', c2: '#000000' },
+      { id: 'bubblePop',   name: 'BUBBLE POP',   type: 'canvas', draw: drawBubblePop,   price: 50, c1: '#30d5c8', c2: '#0a4a6a' }
     ];
+    let ownedBGs = { pink: true, teal: true, purple: true, sunset: true, ocean: true, forest: true, night: true, gold: true, mint: true };
+    let activeBG = 'pink';
+
+    // --- Canvas backgrounds (drawers) ---
+    function drawAuroraWave(ctx, W, H, time, c1, c2) {
+      ctx.fillStyle = c2; ctx.fillRect(0, 0, W, H);
+      const t = time * 0.001;
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        const g = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, c1);
+        g.addColorStop(1, 'rgba(58,12,163,0)');
+        ctx.fillStyle = g;
+        const off = Math.sin(t * 0.7 + i) * 80;
+        for (let x = 0; x <= W; x += 20) {
+          const y = H * 0.3 + Math.sin(x * 0.01 + t + i) * 40 + off;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.lineTo(W, H); ctx.lineTo(0, H);
+        ctx.closePath();
+        ctx.globalAlpha = 0.35 - i * 0.05;
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    function drawOceanRipple(ctx, W, H, time, c1, c2) {
+      const t = time * 0.001;
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, c1); g.addColorStop(1, c2);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < 20; i++) {
+        ctx.beginPath();
+        const y0 = (i / 20) * H;
+        for (let x = 0; x <= W; x += 20) {
+          const y = y0 + Math.sin(x * 0.02 + t * 2 + i) * 6;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+    function drawSunsetHills(ctx, W, H, time, c1, c2) {
+      const t = time * 0.001;
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, c1); g.addColorStop(1, c2);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = 'rgba(255,100,50,0.5)';
+      ctx.beginPath(); ctx.arc(W*0.7, H*0.3, H*0.15, 0, Math.PI*2); ctx.fill();
+      for (let k = 0; k < 3; k++) {
+        ctx.fillStyle = `rgba(40,10,30,${0.5 + k * 0.15})`;
+        ctx.beginPath();
+        const baseY = H * (0.6 + k * 0.12);
+        ctx.moveTo(0, baseY);
+        for (let x = 0; x <= W; x += 10) {
+          const y = baseY - Math.sin((x + k * 200 + t * 30) * 0.005) * 40 - k * 30;
+          ctx.lineTo(x, y);
+        }
+        ctx.lineTo(W, H); ctx.lineTo(0, H);
+        ctx.closePath(); ctx.fill();
+      }
+    }
+    function drawForestMist(ctx, W, H, time, c1, c2) {
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, c1); g.addColorStop(1, c2);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      const t = time * 0.001;
+      for (let i = 0; i < 15; i++) {
+        ctx.fillStyle = `rgba(255,255,255,${0.03 + (i % 3) * 0.02})`;
+        ctx.beginPath();
+        const y = H * 0.2 + (i / 15) * H * 0.6 + Math.sin(t + i) * 8;
+        ctx.ellipse(W * 0.5 + Math.cos(t*0.5+i)*W*0.3, y, W*0.4, 30, 0, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+    function drawNeonGrid(ctx, W, H, time, c1, c2) {
+      ctx.fillStyle = c2; ctx.fillRect(0, 0, W, H);
+      const t = time * 0.001;
+      ctx.strokeStyle = c1;
+      ctx.shadowColor = c1; ctx.shadowBlur = 10;
+      ctx.lineWidth = 1.5;
+      const horizon = H * 0.55;
+      for (let i = -10; i <= 10; i++) {
+        ctx.beginPath();
+        ctx.moveTo(W/2 + i * 20, horizon);
+        ctx.lineTo(W/2 + i * W * 0.15, H);
+        ctx.stroke();
+      }
+      const offset = (t * 40) % 40;
+      for (let y = horizon; y < H + 40; y += 40) {
+        const yy = y + offset;
+        ctx.beginPath();
+        ctx.moveTo(0, yy); ctx.lineTo(W, yy);
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+      const g = ctx.createLinearGradient(0, 0, 0, horizon);
+      g.addColorStop(0, c2); g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, horizon);
+    }
+    function drawGalaxySpin(ctx, W, H, time, c1, c2) {
+      ctx.fillStyle = c2; ctx.fillRect(0, 0, W, H);
+      const t = time * 0.0005;
+      const cx = W * 0.5, cy = H * 0.5;
+      for (let k = 0; k < 3; k++) {
+        for (let i = 0; i < 300; i++) {
+          const a = (i / 300) * Math.PI * 4 + t * (1 + k * 0.3);
+          const r = (i / 300) * Math.min(W, H) * 0.6;
+          ctx.globalAlpha = 0.3;
+          ctx.fillStyle = c1;
+          ctx.beginPath();
+          ctx.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.5, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+    function drawFireflies(ctx, W, H, time, c1, c2) {
+      ctx.fillStyle = c1; ctx.fillRect(0, 0, W, H);
+      const t = time * 0.001;
+      for (let i = 0; i < 40; i++) {
+        const x = (Math.sin(t * 0.5 + i) * 0.5 + 0.5) * W;
+        const y = (Math.cos(t * 0.7 + i * 1.3) * 0.5 + 0.5) * H;
+        const r = 2 + Math.sin(t * 2 + i) * 1;
+        ctx.fillStyle = `rgba(255,240,150,${0.5 + Math.sin(t*3+i)*0.5})`;
+        ctx.shadowColor = '#fff8a0'; ctx.shadowBlur = 15;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+    }
+    function drawBubblePop(ctx, W, H, time, c1, c2) {
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, c1); g.addColorStop(1, c2);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      const t = time * 0.001;
+      for (let i = 0; i < 25; i++) {
+        const x = ((i * 137 + Math.sin(t + i) * 50) % W);
+        const y = ((H - ((t * 50 + i * 80) % (H + 100))));
+        const r = 8 + (i % 5) * 4;
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,0.1)';
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+      }
+    }
 
     const RENDERS = [
       { id: 'flat',     name: 'Flat',     price: 0,   desc: 'Classic flat colors' },
@@ -1295,6 +1475,23 @@
       try {
         localStorage.setItem('stack3d_owned_renders', JSON.stringify(ownedRenders));
         localStorage.setItem('stack3d_active_render', activeRender);
+      } catch (e) {}
+    }
+    function loadBGs() {
+      try {
+        const raw = localStorage.getItem('stack3d_owned_bgs');
+        if (raw) {
+          const parsed = JSON.parse(raw) || {};
+          for (const id in parsed) ownedBGs[id] = !!parsed[id];
+        }
+        const act = localStorage.getItem('stack3d_active_bg');
+        if (act && BG_PALETTES.some(p => p.id === act)) activeBG = act;
+      } catch (e) {}
+    }
+    function saveBGs() {
+      try {
+        localStorage.setItem('stack3d_owned_bgs', JSON.stringify(ownedBGs));
+        localStorage.setItem('stack3d_active_bg', activeBG);
       } catch (e) {}
     }
 
@@ -1330,9 +1527,6 @@
     const startGameBtn = document.getElementById('startGameBtn');
     const modeMenuClose = document.getElementById('modeMenuClose');
     const settingsClose = document.getElementById('settingsClose');
-    const toggleTimeBg = document.getElementById('toggleTimeBg');
-    const bgColorBtn = document.getElementById('bgColorBtn');
-    const toggleParticles = document.getElementById('toggleParticles');
     const toggleSound = document.getElementById('toggleSound');
     const langEn = document.getElementById('langEn');
     const langRu = document.getElementById('langRu');
@@ -1348,7 +1542,8 @@
     const creditsClose = document.getElementById('creditsClose');
     const shopOverlay = document.getElementById('shopOverlay');
     const shopClose = document.getElementById('shopClose');
-    const renderGrid = document.getElementById('renderGrid');
+    const itemGrid = document.getElementById('itemGrid');
+    const shopTabs = document.querySelectorAll('.shopTab');
     const confirmOverlay = document.getElementById('confirmOverlay');
     const confirmTitle = document.getElementById('confirmTitle');
     const confirmText = document.getElementById('confirmText');
@@ -1357,10 +1552,11 @@
     const confirmNo = document.getElementById('confirmNo');
 
     let gameStarted = false;
-    let settings = { mode: 'classic', timeBg: true, bgIndex: 0, particles: true, sound: true, lang: 'en' };
+    let settings = { mode: 'classic', particles: true, sound: true, lang: 'en' };
     let W, H, dpr;
     let ISO_SCALE = 0.55;
     let MIN_DIM = 0;
+    let shopTab = 'renders';
 
     let coins = 0;
     function loadCoins() { try { coins = parseInt(localStorage.getItem('stack3d_coins') || '0', 10) || 0; } catch (e) { coins = 0; } }
@@ -1374,6 +1570,7 @@
       coins += n;
       saveCoins();
       updateCoinsUI();
+      checkAchievements(typeof score !== 'undefined' ? score : 0, coins);
     }
 
     const SAVE_KEY = 'stack3d_lastgame';
@@ -1594,6 +1791,7 @@
         blocks.push({ x: newX, y: newY, z: b.z, sizeX, sizeY, color: b.color });
         playDrop();
       }
+      const beforeScore = score;
       if (score > 0 && score % 10 === 0) addCoins(1);
       if (perfectThisTurn) addCoins(1);
       score++;
@@ -1603,7 +1801,7 @@
       cameraOffsetY += (targetCamY - cameraOffsetY) * 0.3;
       spawnBlock();
       saveGame();
-      checkAchievements(score);
+      checkAchievements(score, coins);
     }
     function endGame() {
       gameOver = true;
@@ -1613,7 +1811,7 @@
       bestScoreEl.textContent = best;
       gameoverEl.style.display = 'flex';
       clearSave();
-      checkAchievements(score);
+      checkAchievements(score, coins);
     }
     function restart() { init(); }
     window.restart = restart;
@@ -1678,42 +1876,52 @@
     }
 
     // ===== CONFIRM =====
-    let pendingRender = null;
-    function confirmPurchase(render) {
-      pendingRender = render;
+    let pendingBuy = null;
+    function confirmPurchase(item, kind) {
+      pendingBuy = { item, kind };
       confirmTitle.textContent = t('confirmTitle');
-      confirmText.textContent = t('confirmBuy') + ' ' + render.name;
-      confirmPrice.textContent = t('confirmFor') + ' ' + render.price;
+      const name = item.name;
+      confirmText.textContent = t('confirmBuy') + ' ' + name;
+      confirmPrice.textContent = t('confirmFor') + ' ' + item.price;
       confirmYes.textContent = t('yes');
       confirmNo.textContent = t('no');
       confirmOverlay.classList.add('open');
     }
     function closeConfirm() {
       confirmOverlay.classList.remove('open');
-      pendingRender = null;
+      pendingBuy = null;
     }
-    function doBuyRender(r) {
-      if (coins >= r.price) {
-        coins -= r.price;
+    function doBuy() {
+      if (!pendingBuy) return;
+      const { item, kind } = pendingBuy;
+      if (coins >= item.price) {
+        coins -= item.price;
         saveCoins();
-        ownedRenders[r.id] = true;
-        activeRender = r.id;
-        saveRenders();
+        if (kind === 'render') {
+          ownedRenders[item.id] = true;
+          activeRender = item.id;
+          saveRenders();
+        } else {
+          ownedBGs[item.id] = true;
+          activeBG = item.id;
+          saveBGs();
+        }
         updateCoinsUI();
         renderShop();
+        checkAchievements(score || 0, coins);
       }
     }
     confirmYes.addEventListener('click', (e) => {
       e.preventDefault(); e.stopPropagation();
-      const r = pendingRender;
+      const p = pendingBuy;
       closeConfirm();
-      if (r) doBuyRender(r);
+      if (p) doBuy();
     });
     confirmYes.addEventListener('touchstart', (e) => {
       e.preventDefault(); e.stopPropagation();
-      const r = pendingRender;
+      const p = pendingBuy;
       closeConfirm();
-      if (r) doBuyRender(r);
+      if (p) doBuy();
     }, { passive: false });
     confirmNo.addEventListener('click', (e) => {
       e.preventDefault(); e.stopPropagation();
@@ -1787,49 +1995,115 @@
       }
       cx.restore();
     }
+    function renderBgPreview(bg) {
+      const c = document.createElement('canvas');
+      c.width = 100; c.height = 60;
+      const cx = c.getContext('2d');
+      if (bg.type === 'gradient' || bg.type === 'stars') {
+        const g = cx.createLinearGradient(0, 0, 0, 60);
+        g.addColorStop(0, bg.top); g.addColorStop(1, bg.bot);
+        cx.fillStyle = g; cx.fillRect(0, 0, 100, 60);
+        if (bg.type === 'stars') {
+          for (let i = 0; i < 20; i++) {
+            cx.fillStyle = 'rgba(255,255,255,' + (0.5 + Math.random()*0.5) + ')';
+            cx.beginPath();
+            cx.arc(Math.random()*100, Math.random()*60, 1 + Math.random(), 0, Math.PI*2);
+            cx.fill();
+          }
+        }
+      } else if (bg.type === 'canvas' && typeof bg.draw === 'function') {
+        bg.draw(cx, 100, 60, 1000, bg.c1, bg.c2);
+      }
+      return c;
+    }
     function renderShop() {
-      if (!renderGrid) return;
+      if (!itemGrid) return;
       updateCoinsUI();
-      renderGrid.innerHTML = '';
-      RENDERS.forEach(r => {
-        const isOwned = !!ownedRenders[r.id];
-        const isActive = activeRender === r.id;
-        const item = document.createElement('div');
-        item.className = 'renderItem' + (isOwned ? ' owned' : '') + (isActive ? ' active' : '');
-        const preview = renderRenderPreview(r);
-        const previewWrap = document.createElement('div');
-        previewWrap.className = 'renderPreview';
-        previewWrap.appendChild(preview);
-        item.appendChild(previewWrap);
-        const nameEl = document.createElement('div');
-        nameEl.className = 'renderName';
-        nameEl.textContent = r.name;
-        item.appendChild(nameEl);
-        const priceEl = document.createElement('div');
-        priceEl.className = 'renderPrice';
-        if (isOwned) {
-          priceEl.textContent = isActive ? t('selected') : t('owned');
-        } else {
-          priceEl.innerHTML = '<span class="coinDot"></span>' + r.price;
-        }
-        item.appendChild(priceEl);
-        if (isActive) {
-          const sel = document.createElement('div');
-          sel.className = 'renderSelected';
-          sel.textContent = '✓';
-          item.appendChild(sel);
-        }
-        item.addEventListener('click', (e) => {
-          e.stopPropagation();
-          onRenderClick(r);
+      shopTabs.forEach(tab => tab.classList.toggle('active', tab.dataset.tab === shopTab));
+      itemGrid.innerHTML = '';
+      if (shopTab === 'renders') {
+        RENDERS.forEach(r => {
+          const isOwned = !!ownedRenders[r.id];
+          const isActive = activeRender === r.id;
+          const item = document.createElement('div');
+          item.className = 'renderItem' + (isOwned ? ' owned' : '') + (isActive ? ' active' : '');
+          const preview = renderRenderPreview(r);
+          const previewWrap = document.createElement('div');
+          previewWrap.className = 'renderPreview';
+          previewWrap.appendChild(preview);
+          item.appendChild(previewWrap);
+          const nameEl = document.createElement('div');
+          nameEl.className = 'renderName';
+          nameEl.textContent = r.name;
+          item.appendChild(nameEl);
+          const priceEl = document.createElement('div');
+          priceEl.className = 'renderPrice';
+          if (isOwned) {
+            priceEl.textContent = isActive ? t('selected') : t('owned');
+          } else {
+            priceEl.innerHTML = '<span class="coinDot"></span>' + r.price;
+          }
+          item.appendChild(priceEl);
+          if (isActive) {
+            const sel = document.createElement('div');
+            sel.className = 'renderSelected';
+            sel.textContent = '✓';
+            item.appendChild(sel);
+          }
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            onRenderClick(r);
+          });
+          item.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            onRenderClick(r);
+          }, { passive: false });
+          itemGrid.appendChild(item);
         });
-        item.addEventListener('touchstart', (e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          onRenderClick(r);
-        }, { passive: false });
-        renderGrid.appendChild(item);
-      });
+      } else {
+        BG_PALETTES.forEach(bg => {
+          const isOwned = !!ownedBGs[bg.id];
+          const isActive = activeBG === bg.id;
+          const item = document.createElement('div');
+          item.className = 'bgItem' + (isOwned ? ' owned' : '') + (isActive ? ' active' : '');
+          const preview = renderBgPreview(bg);
+          const previewWrap = document.createElement('div');
+          previewWrap.className = 'bgPreview';
+          previewWrap.appendChild(preview);
+          item.appendChild(previewWrap);
+          const nameEl = document.createElement('div');
+          nameEl.className = 'bgName';
+          nameEl.textContent = bg.name;
+          item.appendChild(nameEl);
+          const priceEl = document.createElement('div');
+          priceEl.className = 'bgPrice';
+          if (isOwned) {
+            priceEl.textContent = isActive ? t('selected') : t('owned');
+          } else if (bg.price === 0) {
+            priceEl.textContent = t('free');
+          } else {
+            priceEl.innerHTML = '<span class="coinDot"></span>' + bg.price;
+          }
+          item.appendChild(priceEl);
+          if (isActive) {
+            const sel = document.createElement('div');
+            sel.className = 'bgSelected';
+            sel.textContent = '✓';
+            item.appendChild(sel);
+          }
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            onBgClick(bg);
+          });
+          item.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            onBgClick(bg);
+          }, { passive: false });
+          itemGrid.appendChild(item);
+        });
+      }
     }
     function onRenderClick(r) {
       ensureAudio();
@@ -1841,9 +2115,37 @@
         return;
       }
       if (coins >= r.price) {
-        confirmPurchase(r);
+        confirmPurchase(r, 'render');
       } else {
         const item = Array.from(document.querySelectorAll('.renderItem')).find(el => el.querySelector('.renderName') && el.querySelector('.renderName').textContent === r.name);
+        if (item) {
+          item.style.transition = 'transform 0.1s';
+          item.style.transform = 'translateX(-4px)';
+          setTimeout(() => { item.style.transform = 'translateX(4px)'; }, 60);
+          setTimeout(() => { item.style.transform = ''; }, 120);
+        }
+      }
+    }
+    function onBgClick(bg) {
+      ensureAudio();
+      playClick();
+      if (ownedBGs[bg.id]) {
+        activeBG = bg.id;
+        saveBGs();
+        renderShop();
+        return;
+      }
+      if (bg.price === 0) {
+        ownedBGs[bg.id] = true;
+        activeBG = bg.id;
+        saveBGs();
+        renderShop();
+        return;
+      }
+      if (coins >= bg.price) {
+        confirmPurchase(bg, 'bg');
+      } else {
+        const item = Array.from(document.querySelectorAll('.bgItem')).find(el => el.querySelector('.bgName') && el.querySelector('.bgName').textContent === bg.name);
         if (item) {
           item.style.transition = 'transform 0.1s';
           item.style.transform = 'translateX(-4px)';
@@ -1862,6 +2164,12 @@
       shopOverlay.classList.remove('open');
       showMainMenu();
     }
+    shopTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        shopTab = tab.dataset.tab;
+        renderShop();
+      });
+    });
     shopBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openShop(); });
     shopBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); openShop(); }, { passive: false });
     shopClose.addEventListener('click', closeShop);
@@ -1897,6 +2205,7 @@
       if (!data) { openPlay(); return; }
       mainMenuEl.classList.remove('open');
       startEl.classList.add('hidden');
+      onStartScreen = false;
       playing = true;
       menuIcon.classList.add('show');
       restoreGame(data);
@@ -1907,6 +2216,7 @@
       if (!data) { openPlay(); return; }
       mainMenuEl.classList.remove('open');
       startEl.classList.add('hidden');
+      onStartScreen = false;
       playing = true;
       menuIcon.classList.add('show');
       restoreGame(data);
@@ -1915,6 +2225,7 @@
     function startPlay() {
       hideAllScreens();
       startEl.classList.add('hidden');
+      onStartScreen = false;
       playing = true;
       menuIcon.classList.add('show');
       init();
@@ -1928,71 +2239,22 @@
       document.querySelectorAll('.modeBtn[data-mode]').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.mode === settings.mode);
       });
-      if (toggleTimeBg) toggleTimeBg.textContent = settings.timeBg ? t('timeBg') : t('timeBgOff');
-      if (bgColorBtn) bgColorBtn.style.display = 'block';
-      if (toggleParticles) toggleParticles.textContent = settings.particles ? t('particles') : t('particlesOff');
       if (toggleSound) toggleSound.textContent = settings.sound ? t('sound') : t('soundOff');
       if (langEn) langEn.classList.toggle('active', currentLang === 'en');
       if (langRu) langRu.classList.toggle('active', currentLang === 'ru');
       if (langPl) langPl.classList.toggle('active', currentLang === 'pl');
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (el === toggleTimeBg || el === toggleParticles || el === toggleSound) return;
+        if (el === toggleSound) return;
         if (el.classList.contains('modeBtn') && el.dataset.mode) return;
         if (el === langEn || el === langRu || el === langPl) return;
         el.textContent = t(key);
       });
     }
-    toggleTimeBg.addEventListener('click', () => { settings.timeBg = !settings.timeBg; saveSettings(); updateMenuUI(); });
-    toggleParticles.addEventListener('click', () => { settings.particles = !settings.particles; saveSettings(); updateMenuUI(); });
     toggleSound.addEventListener('click', () => { settings.sound = !settings.sound; saveSettings(); updateMenuUI(); });
     langEn.addEventListener('click', () => { currentLang = 'en'; settings.lang = 'en'; saveSettings(); applyLang(); updateMenuUI(); });
     langRu.addEventListener('click', () => { currentLang = 'ru'; settings.lang = 'ru'; saveSettings(); applyLang(); updateMenuUI(); });
     langPl.addEventListener('click', () => { currentLang = 'pl'; settings.lang = 'pl'; saveSettings(); applyLang(); updateMenuUI(); });
-    function renderPalette() {
-      paletteGrid.innerHTML = BG_PALETTES.map((p, i) => {
-        const bg = `linear-gradient(180deg, ${p.top}, ${p.bot})`;
-        let decor = '';
-        if (p.decor === 'stars') {
-          decor = `<div style="position:absolute;inset:0;pointer-events:none">${Array.from({length:12}).map(() => {
-            const x = Math.random()*100, y = Math.random()*100, s = 1+Math.random()*2;
-            return `<div style="position:absolute;left:${x}%;top:${y}%;width:${s}px;height:${s}px;background:#fff;border-radius:50%;box-shadow:0 0 4px #fff"></div>`;
-          }).join('')}</div>`;
-        }
-        return `
-          <div class="paletteItem ${i === settings.bgIndex ? 'selected' : ''}" data-idx="${i}">
-            <div style="position:absolute;inset:0;background:${bg}"></div>
-            ${decor}
-            <div class="paletteName">${p.name}</div>
-          </div>
-        `;
-      }).join('');
-      paletteGrid.querySelectorAll('.paletteItem').forEach(item => {
-        item.addEventListener('click', (e) => {
-          e.stopPropagation();
-          settings.bgIndex = parseInt(item.dataset.idx, 10);
-          saveSettings(); renderPalette();
-        });
-        item.addEventListener('touchstart', (e) => {
-          e.stopPropagation(); e.preventDefault();
-          settings.bgIndex = parseInt(item.dataset.idx, 10);
-          saveSettings(); renderPalette();
-        }, { passive: false });
-      });
-    }
-    function openPalette(e) {
-      if (e) { e.preventDefault(); e.stopPropagation(); }
-      renderPalette(); paletteOverlay.classList.add('open');
-    }
-    function closePalette(e) {
-      if (e) { e.preventDefault(); e.stopPropagation(); }
-      paletteOverlay.classList.remove('open');
-    }
-    bgColorBtn.addEventListener('click', openPalette);
-    bgColorBtn.addEventListener('touchstart', openPalette, { passive: false });
-    paletteClose.addEventListener('click', closePalette);
-    paletteClose.addEventListener('touchstart', closePalette, { passive: false });
-    paletteOverlay.addEventListener('click', closePalette);
     changelogClose.addEventListener('click', closeChangelog);
     changelogClose.addEventListener('touchstart', closeChangelog, { passive: false });
     changelogOverlay.addEventListener('click', closeChangelog);
@@ -2172,11 +2434,21 @@
       }
     }
     let decorStars = null;
-    function drawDecor() {
-      const p = BG_PALETTES[settings.bgIndex];
-      if (!p || !p.decor) return;
-      if (p.decor === 'stars') {
-        if (!decorStars) decorStars = Array.from({length:80}).map(() => ({
+    function drawBackgroundMain(timeMs) {
+      const bg = BG_PALETTES.find(p => p.id === activeBG) || BG_PALETTES[0];
+      if (bg.type === 'gradient') {
+        const grd = ctx.createLinearGradient(0, 0, 0, H);
+        grd.addColorStop(0, bg.top);
+        grd.addColorStop(1, bg.bot);
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, W, H);
+      } else if (bg.type === 'stars') {
+        const grd = ctx.createLinearGradient(0, 0, 0, H);
+        grd.addColorStop(0, bg.top);
+        grd.addColorStop(1, bg.bot);
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, W, H);
+        if (!decorStars) decorStars = Array.from({length:100}).map(() => ({
           x: Math.random(), y: Math.random(), s: 0.5 + Math.random() * 1.5, a: 0.4 + Math.random() * 0.6
         }));
         ctx.save();
@@ -2188,29 +2460,13 @@
           ctx.fill();
         }
         ctx.restore();
+      } else if (bg.type === 'canvas' && typeof bg.draw === 'function') {
+        bg.draw(ctx, W, H, timeMs, bg.c1, bg.c2);
       }
     }
     function draw() {
-      let fromIdx = 0, toIdx = 0, t = 0;
-      if (settings.timeBg) {
-        const elapsed = (performance.now() - gameStartTime) / 1000;
-        const step = Math.floor(elapsed / 35);
-        fromIdx = (settings.bgIndex + step) % BG_PALETTES.length;
-        toIdx = (fromIdx + 1) % BG_PALETTES.length;
-        t = (elapsed % 35) / 35;
-        if (t > 1 - (5 / 35)) t = (t - (1 - 5 / 35)) / (5 / 35);
-        else t = 0;
-      } else {
-        fromIdx = settings.bgIndex; toIdx = settings.bgIndex; t = 0;
-      }
-      const topCol = lerpColor(BG_PALETTES[fromIdx].top, BG_PALETTES[toIdx].top, t);
-      const botCol = lerpColor(BG_PALETTES[fromIdx].bot, BG_PALETTES[toIdx].bot, t);
-      const grd = ctx.createLinearGradient(0, 0, 0, H);
-      grd.addColorStop(0, topCol);
-      grd.addColorStop(1, botCol);
-      ctx.fillStyle = grd;
-      ctx.fillRect(0, 0, W, H);
-      drawDecor();
+      const timeMs = performance.now();
+      drawBackgroundMain(timeMs);
       drawBackground();
       const camY = cameraOffsetY;
       const sorted = [...blocks];
@@ -2270,12 +2526,14 @@
     startMenuBtn.addEventListener('click', (e) => {
       e.preventDefault(); e.stopPropagation();
       startEl.classList.add('hidden');
+      onStartScreen = false;
       gameStarted = true;
       showMainMenu();
     });
     startMenuBtn.addEventListener('touchstart', (e) => {
       e.preventDefault(); e.stopPropagation();
       startEl.classList.add('hidden');
+      onStartScreen = false;
       gameStarted = true;
       showMainMenu();
     }, { passive: false });
@@ -2311,10 +2569,12 @@
     loadAchievements();
     loadCoins();
     loadRenders();
+    loadBGs();
     updateCoinsUI();
     updateMenuUI();
     applyLang();
     updateContinueBtn();
+    checkAchievements(loadBest(), coins);
 
     (function preload() {
       gameStartTime = performance.now();
@@ -2324,4 +2584,4 @@
     })();
   </script>
 </body>
-</html>
+</html> 
