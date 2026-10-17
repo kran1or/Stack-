@@ -26,6 +26,17 @@
     #game { pointer-events: none; }
     #leafCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 900; }
 
+    .coinDot {
+      display: inline-block;
+      width: 1em; height: 1em;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff6b0, #ffd34d 45%, #b8860b 100%);
+      box-shadow: inset 0 0 2px rgba(0,0,0,0.4);
+      vertical-align: -0.15em;
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+
     #start {
       position: fixed; inset: 0;
       display: flex; flex-direction: column;
@@ -108,7 +119,7 @@
       font-size: clamp(16px, 5vw, 20px);
       color: #2a6fb0;
     }
-    #mainMenu .coinsBox .coinIcon { font-size: 24px; }
+    #mainMenu .coinsBox .coinIcon { display: inline-flex; align-items: center; font-size: 24px; }
     #mainMenu .bigBtn {
       display: block; width: 100%;
       padding: 16px 24px; margin-bottom: 10px;
@@ -273,6 +284,7 @@
       font-size: clamp(14px, 4vw, 18px); color: #ffd34d;
       text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
       pointer-events: none; z-index: 5;
+      display: inline-flex; align-items: center;
     }
     #modeLabel {
       position: fixed; top: max(132px, calc(env(safe-area-inset-top) + 112px));
@@ -552,6 +564,7 @@
       color: #2a6fb0;
       margin-bottom: 18px;
       font-family: system-ui, sans-serif;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
     }
     #shopTabs {
       display: flex;
@@ -739,7 +752,7 @@
   <div id="mainMenu">
     <h1 id="menuTitle">STACK 3D</h1>
     <div class="coinsBox">
-      <span class="coinIcon">🪙</span>
+      <span class="coinIcon"><span class="coinDot"></span></span>
       <span id="menuCoins">0</span>
     </div>
     <button class="bigBtn" id="continueBtn" style="display:none;">CONTINUE</button>
@@ -821,7 +834,7 @@
   <div id="shopOverlay">
     <div id="shopBox">
       <h2 data-i18n="shop">SHOP</h2>
-      <div class="shopCoins">🪙 <span id="shopCoinsValue">0</span></div>
+      <div class="shopCoins"><span class="coinDot"></span> <span id="shopCoinsValue">0</span></div>
       <div id="shopTabs">
         <button class="shopTab active" data-tab="renders">RENDERS</button>
       </div>
@@ -845,7 +858,7 @@
   <canvas id="game"></canvas>
   <div id="score">0</div>
   <div id="best">BEST: 0</div>
-  <div id="coinsHud">🪙 0</div>
+  <div id="coinsHud"><span class="coinDot"></span><span id="coinsHudValue">0</span></div>
   <div id="modeLabel">CLASSIC</div>
   <div id="perfect" data-i18n="perfect">PERFECT!</div>
   <div id="hint" data-i18n="tapToPlace">TAP TO PLACE THE BLOCK</div>
@@ -1059,18 +1072,24 @@
       { version: '1.6.1', date: '2026-10-17', current: true, changesEn: [
         'White winter theme (menus)',
         'Leaves replaced with blue snowflakes (visible above menus)',
+        'Lightweight snowflakes (no shadowBlur) — smoother FPS',
+        'Coin emoji replaced with CSS gold circle (renders on all devices)',
         '"Happy winter!" title on start screen (not translated)',
         'Polish language added',
         'FPS setting removed'
       ], changesRu: [
         'Белая зимняя тема (меню)',
         'Листья заменены синими снежинками (видны поверх меню)',
+        'Лёгкие снежинки (без shadowBlur) — плавнее FPS',
+        'Эмодзи монеты заменено CSS-кружком (рисуется на всех устройствах)',
         'Надпись "Happy winter!" на заставке (не переводится)',
         'Добавлен польский язык',
         'Убрана настройка FPS'
       ], changesPl: [
         'Biały zimowy motyw (menu)',
         'Liście zastąpione niebieskimi płatkami śniegu (widoczne nad menu)',
+        'Lekkie płatki śniegu (bez shadowBlur) — płynniejsze FPS',
+        'Emoji monety zastąpione okręgiem CSS (działa na wszystkich urządzeniach)',
         'Napis "Happy winter!" na ekranie startowym (nie tłumaczony)',
         'Dodano język polski',
         'Usunięto ustawienie FPS'
@@ -1152,7 +1171,7 @@
 
     let playing = false;
 
-    // ===== SNOWFLAKES =====
+    // ===== SNOWFLAKES (lightweight) =====
     (function() {
       const leafCanvas = document.getElementById('leafCanvas');
       const lctx = leafCanvas.getContext('2d');
@@ -1170,12 +1189,12 @@
       window.addEventListener('resize', leafResize);
       window.addEventListener('orientationchange', () => setTimeout(leafResize, 250));
       const flakes = [];
-      const MAX_FLAKES = 60;
+      const MAX_FLAKES = 30;
       function makeFlake(initial) {
         return {
           x: Math.random() * LW,
           y: initial ? Math.random() * LH : -30 - Math.random() * 100,
-          size: 8 + Math.random() * 14,
+          size: 7 + Math.random() * 11,
           rot: Math.random() * Math.PI * 2,
           rotSpeed: (Math.random() - 0.5) * 0.02,
           vy: 0.5 + Math.random() * 1.2,
@@ -1183,7 +1202,7 @@
           sway: Math.random() * Math.PI * 2,
           swaySpeed: 0.01 + Math.random() * 0.02,
           swayAmp: 0.6 + Math.random() * 1.2,
-          alpha: 0.6 + Math.random() * 0.4
+          alpha: 0.55 + Math.random() * 0.4
         };
       }
       for (let i = 0; i < MAX_FLAKES; i++) flakes.push(makeFlake(true));
@@ -1192,23 +1211,14 @@
         lctx.translate(f.x, f.y);
         lctx.rotate(f.rot);
         lctx.globalAlpha = f.alpha;
-        lctx.strokeStyle = '#2a6fb0';
-        lctx.lineWidth = Math.max(1.2, f.size / 8);
-        lctx.shadowColor = 'rgba(42,111,176,0.7)';
-        lctx.shadowBlur = 6;
+        lctx.strokeStyle = '#1b4f87';
+        lctx.lineWidth = 1.2;
         const r = f.size / 2;
         lctx.beginPath();
         for (let i = 0; i < 6; i++) {
           const a = (i / 6) * Math.PI * 2;
-          const x1 = Math.cos(a) * r, y1 = Math.sin(a) * r;
           lctx.moveTo(0, 0);
-          lctx.lineTo(x1, y1);
-          const bx = Math.cos(a) * r * 0.55, by = Math.sin(a) * r * 0.55;
-          const da = Math.PI / 6;
-          lctx.moveTo(bx, by);
-          lctx.lineTo(bx + Math.cos(a + da) * r * 0.35, by + Math.sin(a + da) * r * 0.35);
-          lctx.moveTo(bx, by);
-          lctx.lineTo(bx + Math.cos(a - da) * r * 0.35, by + Math.sin(a - da) * r * 0.35);
+          lctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
         }
         lctx.stroke();
         lctx.restore();
@@ -1291,7 +1301,7 @@
     const ctx = canvas.getContext('2d');
     const scoreEl = document.getElementById('score');
     const bestEl = document.getElementById('best');
-    const coinsHudEl = document.getElementById('coinsHud');
+    const coinsHudEl = document.getElementById('coinsHudValue');
     const menuCoinsEl = document.getElementById('menuCoins');
     const shopCoinsEl = document.getElementById('shopCoinsValue');
     const modeLabel = document.getElementById('modeLabel');
@@ -1355,7 +1365,7 @@
     function loadCoins() { try { coins = parseInt(localStorage.getItem('stack3d_coins') || '0', 10) || 0; } catch (e) { coins = 0; } }
     function saveCoins() { try { localStorage.setItem('stack3d_coins', String(coins)); } catch (e) {} }
     function updateCoinsUI() {
-      if (coinsHudEl) coinsHudEl.textContent = '🪙 ' + coins;
+      if (coinsHudEl) coinsHudEl.textContent = coins;
       if (menuCoinsEl) menuCoinsEl.textContent = coins;
       if (shopCoinsEl) shopCoinsEl.textContent = coins;
     }
@@ -1672,7 +1682,7 @@
       pendingRender = render;
       confirmTitle.textContent = t('confirmTitle');
       confirmText.textContent = t('confirmBuy') + ' ' + render.name;
-      confirmPrice.textContent = '🪙 ' + render.price;
+      confirmPrice.textContent = t('confirmFor') + ' ' + render.price + ' монет';
       confirmYes.textContent = t('yes');
       confirmNo.textContent = t('no');
       confirmOverlay.classList.add('open');
@@ -1731,7 +1741,6 @@
       const p2 = { x: ox + s,    y: oy };
       const p3 = { x: ox,        y: oy + s*0.6 };
       const p4 = { x: ox - s,    y: oy };
-      const b1 = { x: ox,        y: oy - s*0.6 + s };
       const b2 = { x: ox + s,    y: oy + s };
       const b3 = { x: ox,        y: oy + s*0.6 + s };
       const b4 = { x: ox - s,    y: oy + s };
@@ -1800,7 +1809,7 @@
         if (isOwned) {
           priceEl.textContent = isActive ? t('selected') : t('owned');
         } else {
-          priceEl.textContent = '🪙 ' + r.price;
+          priceEl.innerHTML = '<span class="coinDot"></span>' + r.price;
         }
         item.appendChild(priceEl);
         if (isActive) {
