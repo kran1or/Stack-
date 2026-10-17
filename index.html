@@ -1074,6 +1074,8 @@
         'Leaves replaced with blue snowflakes (visible above menus)',
         'Lightweight snowflakes (no shadowBlur) — smoother FPS',
         'Coin emoji replaced with CSS gold circle (renders on all devices)',
+        'Removed backgrounds using stickers / trees / flowers: STICKERS, CANDY, FOREST2, ROSE, LAVENDER',
+        '12 backgrounds remaining',
         '"Happy winter!" title on start screen (not translated)',
         'Polish language added',
         'FPS setting removed'
@@ -1082,6 +1084,8 @@
         'Листья заменены синими снежинками (видны поверх меню)',
         'Лёгкие снежинки (без shadowBlur) — плавнее FPS',
         'Эмодзи монеты заменено CSS-кружком (рисуется на всех устройствах)',
+        'Убраны фоны со стикерами / деревьями / цветами: STICKERS, CANDY, FOREST2, ROSE, LAVENDER',
+        'Осталось 12 фонов',
         'Надпись "Happy winter!" на заставке (не переводится)',
         'Добавлен польский язык',
         'Убрана настройка FPS'
@@ -1090,6 +1094,8 @@
         'Liście zastąpione niebieskimi płatkami śniegu (widoczne nad menu)',
         'Lekkie płatki śniegu (bez shadowBlur) — płynniejsze FPS',
         'Emoji monety zastąpione okręgiem CSS (działa na wszystkich urządzeniach)',
+        'Usunięto tła z naklejkami / drzewami / kwiatami: STICKERS, CANDY, FOREST2, ROSE, LAVENDER',
+        'Pozostało 12 teł',
         'Napis "Happy winter!" na ekranie startowym (nie tłumaczony)',
         'Dodano język polski',
         'Usunięto ustawienie FPS'
@@ -1258,12 +1264,7 @@
       { name: 'GOLD',      top: '#ffd700', bot: '#b8860b' },
       { name: 'MINT',      top: '#a8e6cf', bot: '#3bb78f' },
       { name: 'STARRY',    top: '#0a1a4a', bot: '#020818', decor: 'stars' },
-      { name: 'STICKERS',  top: '#ffd34d', bot: '#ff9500', decor: 'stickers' },
-      { name: 'FOREST2',   top: '#4a7c3a', bot: '#1a3a15', decor: 'trees' },
-      { name: 'ROSE',      top: '#ffb3c1', bot: '#c9184a', decor: 'flowers' },
-      { name: 'LAVENDER',  top: '#c8b6ff', bot: '#5a189a', decor: 'flowers' },
       { name: 'MAGIC',     top: '#8338ec', bot: '#3a0ca3', decor: 'stars' },
-      { name: 'CANDY',     top: '#ff9ecd', bot: '#ff2d95', decor: 'stickers' },
       { name: 'AURORA',    top: '#00f5d4', bot: '#3a0ca3', decor: 'stars' }
     ];
 
@@ -1682,7 +1683,7 @@
       pendingRender = render;
       confirmTitle.textContent = t('confirmTitle');
       confirmText.textContent = t('confirmBuy') + ' ' + render.name;
-      confirmPrice.textContent = t('confirmFor') + ' ' + render.price + ' монет';
+      confirmPrice.textContent = t('confirmFor') + ' ' + render.price;
       confirmYes.textContent = t('yes');
       confirmNo.textContent = t('no');
       confirmOverlay.classList.add('open');
@@ -1957,26 +1958,6 @@
             const x = Math.random()*100, y = Math.random()*100, s = 1+Math.random()*2;
             return `<div style="position:absolute;left:${x}%;top:${y}%;width:${s}px;height:${s}px;background:#fff;border-radius:50%;box-shadow:0 0 4px #fff"></div>`;
           }).join('')}</div>`;
-        } else if (p.decor === 'stickers') {
-          const emojis = ['💪','👍','😎','🔥','💪','👍'];
-          const spots = [
-            {x: 18, y: 22}, {x: 50, y: 22}, {x: 82, y: 22},
-            {x: 18, y: 78}, {x: 50, y: 78}, {x: 82, y: 78}
-          ];
-          decor = `<div style="position:absolute;inset:0;pointer-events:none">${spots.map((s, k) => `
-            <div style="position:absolute;left:${s.x}%;top:${s.y}%;font-size:18px;transform:translate(-50%,-50%) rotate(${k%2? 15 : -15}deg)">${emojis[k]}</div>
-          `).join('')}</div>`;
-        } else if (p.decor === 'trees') {
-          decor = `<div style="position:absolute;inset:0;pointer-events:none">${Array.from({length:6}).map(() => {
-            const x = Math.random()*90, y = Math.random()*90;
-            return `<div style="position:absolute;left:${x}%;top:${y}%;font-size:14px">🌲</div>`;
-          }).join('')}</div>`;
-        } else if (p.decor === 'flowers') {
-          const flowers = ['🌸','🌺','🌷','💐','🌹'];
-          decor = `<div style="position:absolute;inset:0;pointer-events:none">${Array.from({length:6}).map((_, k) => {
-            const x = Math.random()*80, y = Math.random()*80;
-            return `<div style="position:absolute;left:${x}%;top:${y}%;font-size:14px">${flowers[k%5]}</div>`;
-          }).join('')}</div>`;
         }
         return `
           <div class="paletteItem ${i === settings.bgIndex ? 'selected' : ''}" data-idx="${i}">
@@ -2190,7 +2171,7 @@
         ctx.fillRect(top.x - b.w/2, top.y, b.w, bot.y - top.y + 100);
       }
     }
-    let decorStars = null, decorStickers = null, decorTrees = null, decorFlowers = null;
+    let decorStars = null;
     function drawDecor() {
       const p = BG_PALETTES[settings.bgIndex];
       if (!p || !p.decor) return;
@@ -2205,51 +2186,6 @@
           ctx.beginPath();
           ctx.arc(s.x * W, s.y * H, s.s, 0, Math.PI * 2);
           ctx.fill();
-        }
-        ctx.restore();
-      } else if (p.decor === 'stickers') {
-        if (!decorStickers) decorStickers = Array.from({length:14}).map(() => ({
-          x: Math.random(), y: Math.random(),
-          e: ['💪','👍','😎','🔥'][Math.floor(Math.random()*4)],
-          rot: Math.random() * Math.PI * 2,
-          size: 28 + Math.random() * 20
-        }));
-        ctx.save();
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        for (const s of decorStickers) {
-          ctx.save();
-          ctx.translate(s.x * W, s.y * H);
-          ctx.rotate(s.rot);
-          ctx.font = `${s.size}px sans-serif`;
-          ctx.fillText(s.e, 0, 0);
-          ctx.restore();
-        }
-        ctx.restore();
-      } else if (p.decor === 'trees') {
-        if (!decorTrees) decorTrees = Array.from({length:24}).map(() => ({
-          x: Math.random(), y: 0.35 + Math.random() * 0.65, s: 0.6 + Math.random() * 1.0
-        }));
-        ctx.save();
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        for (const s of decorTrees) {
-          ctx.font = `${Math.floor(44 * s.s)}px sans-serif`;
-          ctx.fillText('🌲', s.x * W, s.y * H);
-        }
-        ctx.restore();
-      } else if (p.decor === 'flowers') {
-        if (!decorFlowers) decorFlowers = Array.from({length:20}).map(() => ({
-          x: Math.random(), y: Math.random(),
-          e: ['🌸','🌺','🌷','💐','🌹'][Math.floor(Math.random()*5)],
-          size: 28 + Math.random() * 24
-        }));
-        ctx.save();
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        for (const s of decorFlowers) {
-          ctx.font = `${s.size}px sans-serif`;
-          ctx.fillText(s.e, s.x * W, s.y * H);
         }
         ctx.restore();
       }
