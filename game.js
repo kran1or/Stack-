@@ -1,0 +1,1448 @@
+// ==========================================
+// ЛОГИКА STACK 3D
+// ==========================================
+
+function checkOnline() {
+  if (navigator.onLine === false) {
+    document.getElementById('offlineOverlay').classList.add('show');
+  } else {
+    document.getElementById('offlineOverlay').classList.remove('show');
+  }
+}
+window.addEventListener('online', checkOnline);
+window.addEventListener('offline', checkOnline);
+checkOnline();
+
+const TRANSLATIONS = {
+  en: {
+    play: 'PLAY', settings: 'SETTINGS', changelog: 'CHANGELOG',
+    shop: 'SHOP',
+    achievements: 'ACHIEVEMENTS',
+    selectMode: 'SELECT MODE',
+    chooseMode: 'Choose your game mode and press START',
+    modeClassic: 'CLASSIC — fixed speed',
+    modeSpeed: 'SPEED — gets faster over time',
+    modeHard: 'HARD — smaller perfect zone',
+    start: 'START', back: 'BACK',
+    language: 'LANGUAGE', langEn: 'ENGLISH', langRu: 'RUSSIAN', langPl: 'POLISH',
+    visual: 'VISUAL',
+    timeBg: 'TIME BACKGROUND: ON', timeBgOff: 'TIME BACKGROUND: OFF',
+    bgColor: 'BACKGROUND COLOR',
+    particles: 'PARTICLES: ON', particlesOff: 'PARTICLES: OFF',
+    audio: 'AUDIO',
+    sound: 'SOUND: ON', soundOff: 'SOUND: OFF',
+    changelogSub: 'All updates of Stack 3D',
+    perfect: 'PERFECT!',
+    tapToPlace: 'TAP TO PLACE THE BLOCK',
+    gameOver: 'GAME OVER',
+    scoreLabel: 'SCORE', bestLabel: 'BEST',
+    playAgain: 'PLAY AGAIN', mainMenu: 'MAIN MENU',
+    chooseBg: 'CHOOSE BACKGROUND', close: 'CLOSE',
+    best: 'BEST',
+    achUnlocked: 'ACHIEVEMENT UNLOCKED',
+    owned: 'OWNED', buy: 'BUY', selected: 'SELECTED',
+    confirmTitle: 'BUY?', yes: 'YES', no: 'NO',
+    confirmBuy: 'Buy', confirmFor: 'for'
+  },
+  ru: {
+    play: 'ИГРАТЬ', settings: 'НАСТРОЙКИ', changelog: 'ИЗМЕНЕНИЯ',
+    shop: 'МАГАЗИН',
+    achievements: 'ДОСТИЖЕНИЯ',
+    selectMode: 'ВЫБОР РЕЖИМА',
+    chooseMode: 'Выбери режим и нажми СТАРТ',
+    modeClassic: 'КЛАССИКА — постоянная скорость',
+    modeSpeed: 'СКОРОСТЬ — ускоряется со временем',
+    modeHard: 'СЛОЖНО — маленькая зона идеала',
+    start: 'СТАРТ', back: 'НАЗАД',
+    language: 'ЯЗЫК', langEn: 'АНГЛИЙСКИЙ', langRu: 'РУССКИЙ', langPl: 'ПОЛЬСКИЙ',
+    visual: 'ГРАФИКА',
+    timeBg: 'СМЕНА ФОНА: ВКЛ', timeBgOff: 'СМЕНА ФОНА: ВЫКЛ',
+    bgColor: 'ЦВЕТ ФОНА',
+    particles: 'ЧАСТИЦЫ: ВКЛ', particlesOff: 'ЧАСТИЦЫ: ВЫКЛ',
+    audio: 'ЗВУК',
+    sound: 'ЗВУК: ВКЛ', soundOff: 'ЗВУК: ВЫКЛ',
+    changelogSub: 'Все обновления Stack 3D',
+    perfect: 'ИДЕАЛЬНО!',
+    tapToPlace: 'НАЖМИ, ЧТОБЫ ПОСТАВИТЬ БЛОК',
+    gameOver: 'ИГРА ОКОНЧЕНА',
+    scoreLabel: 'СЧЁТ', bestLabel: 'РЕКОРД',
+    playAgain: 'ЕЩЁ РАЗ', mainMenu: 'ГЛАВНОЕ МЕНЮ',
+    chooseBg: 'ВЫБЕРИ ФОН', close: 'ЗАКРЫТЬ',
+    best: 'РЕКОРД',
+    achUnlocked: 'ДОСТИЖЕНИЕ ОТКРЫТО',
+    owned: 'КУПЛЕНО', buy: 'КУПИТЬ', selected: 'ВЫБРАНО',
+    confirmTitle: 'КУПИТЬ?', yes: 'ДА', no: 'НЕТ',
+    confirmBuy: 'Купить', confirmFor: 'за'
+  },
+  pl: {
+    play: 'GRAJ', settings: 'USTAWIENIA', changelog: 'ZMIANY',
+    shop: 'SKLEP',
+    achievements: 'OSIĄGNIĘCIA',
+    selectMode: 'WYBIERZ TRYB',
+    chooseMode: 'Wybierz tryb i naciśnij START',
+    modeClassic: 'KLASYCZNY — stała prędkość',
+    modeSpeed: 'SZYBKOŚĆ — przyspiesza z czasem',
+    modeHard: 'TRUDNY — mniejsza strefa ideału',
+    start: 'START', back: 'WRÓĆ',
+    language: 'JĘZYK', langEn: 'ANGIELSKI', langRu: 'ROSYJSKI', langPl: 'POLSKI',
+    visual: 'WIDOK',
+    timeBg: 'ZMIANA TŁA: WŁ', timeBgOff: 'ZMIANA TŁA: WYŁ',
+    bgColor: 'KOLOR TŁA',
+    particles: 'CZĄSTECZKI: WŁ', particlesOff: 'CZĄSTECZKI: WYŁ',
+    audio: 'DŹWIĘK',
+    sound: 'DŹWIĘK: WŁ', soundOff: 'DŹWIĘK: WYŁ',
+    changelogSub: 'Wszystkie aktualizacje Stack 3D',
+    perfect: 'IDEALNIE!',
+    tapToPlace: 'STUKNIJ, ABY POSTAWIĆ BLOK',
+    gameOver: 'KONIEC GRY',
+    scoreLabel: 'WYNIK', bestLabel: 'REKORD',
+    playAgain: 'ZAGRAJ PONOWNIE', mainMenu: 'MENU GŁÓWNE',
+    chooseBg: 'WYBIERZ TŁO', close: 'ZAMKNIJ',
+    best: 'REKORD',
+    achUnlocked: 'OSIĄGNIĘCIE ODBLOKOWANE',
+    owned: 'POSIADANE', buy: 'KUP', selected: 'WYBRANE',
+    confirmTitle: 'KUPIĆ?', yes: 'TAK', no: 'NIE',
+    confirmBuy: 'Kup', confirmFor: 'za'
+  }
+};
+let currentLang = 'en';
+function t(key) {
+  return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) || key;
+}
+function applyLang() {
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+  renderChangelog();
+  renderAchievements();
+  updateMenuUI();
+  updateBestLabel();
+  updateModeLabel();
+  if (document.getElementById('shopOverlay').classList.contains('open')) {
+    renderShop();
+  }
+}
+function updateBestLabel() { if (typeof best !== 'undefined' && bestEl) bestEl.textContent = t('best') + ': ' + best; }
+function updateModeLabel() { if (typeof settings !== 'undefined' && modeLabel) modeLabel.textContent = settings.mode.toUpperCase(); }
+
+const ACHIEVEMENTS = [
+  { id: 'first', score: 10,   icon: '👶', titleEn: 'First Steps',      titleRu: 'Первые шаги',          titlePl: 'Pierwsze kroki',    descEn: 'Reach 10 points',   descRu: 'Набери 10 очков',   descPl: 'Zdobądź 10 punktów' },
+  { id: 'pro',   score: 50,   icon: '⭐', titleEn: 'Pro Player',        titleRu: 'Про-игрок',            titlePl: 'Pro gracz',         descEn: 'Reach 50 points',   descRu: 'Набери 50 очков',   descPl: 'Zdobądź 50 punktów' },
+  { id: 'local', score: 100,  icon: '🌟', titleEn: 'Local Celebrity',   titleRu: 'Местная знаменитость', titlePl: 'Lokalna gwiazda',   descEn: 'Reach 100 points',  descRu: 'Набери 100 очков',  descPl: 'Zdobądź 100 punktów' },
+  { id: 'noth',  score: 200,  icon: '💪', titleEn: 'Unstoppable',       titleRu: 'Ничего нипочём',       titlePl: 'Nie do zatrzymania',descEn: 'Reach 200 points',  descRu: 'Набери 200 очков',  descPl: 'Zdobądź 200 punktów' },
+  { id: 'hw',    score: 500,  icon: '📚', titleEn: 'And Homework?',     titleRu: 'А уроки?',             titlePl: 'A zadanie domowe?', descEn: 'Reach 500 points',  descRu: 'Набери 500 очков',  descPl: 'Zdobądź 500 punktów' },
+  { id: 'cyber', score: 1000, icon: '🎮', titleEn: 'Cybersport',        titleRu: 'Киберспорт',           titlePl: 'E-sport',           descEn: 'Reach 1000 points', descRu: 'Набери 1000 очков', descPl: 'Zdobądź 1000 punktów' },
+  { id: '????',  score: 2000, icon: '🌲', titleEn: '????',              titleRu: '????',                 titlePl: '????',              descEn: 'Reach 2000 points', descRu: 'Набери 2000 очков', descPl: 'Zdobądź 2000 punktów' }
+];
+let unlocked = {};
+function loadAchievements() {
+  try {
+    const raw = localStorage.getItem('stack3d_ach');
+    if (raw) unlocked = JSON.parse(raw) || {};
+  } catch (e) { unlocked = {}; }
+}
+function saveAchievements() {
+  try { localStorage.setItem('stack3d_ach', JSON.stringify(unlocked)); } catch (e) {}
+}
+function checkAchievements(currentScore) {
+  for (const a of ACHIEVEMENTS) {
+    if (currentScore >= a.score && !unlocked[a.id]) {
+      unlocked[a.id] = true;
+      saveAchievements();
+      showAchievementPopup(a);
+    }
+  }
+}
+function showAchievementPopup(a) {
+  const popup = document.getElementById('achPopup');
+  const title = currentLang === 'ru' ? a.titleRu : (currentLang === 'pl' ? a.titlePl : a.titleEn);
+  document.getElementById('achPopupName').textContent = title;
+  document.getElementById('achLabel').textContent = t('achUnlocked');
+  popup.querySelector('.achIcon').textContent = a.icon;
+  popup.classList.add('show');
+  playAchievement();
+  clearTimeout(showAchievementPopup._t);
+  showAchievementPopup._t = setTimeout(() => {
+    popup.classList.remove('show');
+  }, 3000);
+}
+function renderAchievements() {
+  const list = document.getElementById('achievementsList');
+  if (!list) return;
+  const best = loadBest();
+  list.innerHTML = ACHIEVEMENTS.map(a => {
+    const isUnlocked = unlocked[a.id] || best >= a.score;
+    const title = currentLang === 'ru' ? a.titleRu : (currentLang === 'pl' ? a.titlePl : a.titleEn);
+    const desc = currentLang === 'ru' ? a.descRu : (currentLang === 'pl' ? a.descPl : a.descEn);
+    return `
+      <div class="achRow ${isUnlocked ? 'unlocked' : 'locked'}">
+        <div class="achIcon">${isUnlocked ? a.icon : '🔒'}</div>
+        <div class="achInfo">
+          <div class="achTitle">${title}</div>
+          <div class="achDesc">${desc}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+const CHANGELOG = [
+  { version: '1.6.1', date: '2026-10-17', current: true, changesEn: [
+    'White winter theme (menus)',
+    'Leaves replaced with blue snowflakes',
+    'Snowflakes only on start screen (reduced GPU load)',
+    '20 lightweight snowflakes (no shadowBlur, no rotation)',
+    'Coin emoji replaced with CSS gold circle (renders on all devices)',
+    'Removed backgrounds using stickers / trees / flowers',
+    '12 backgrounds remaining',
+    'Fixed lag when opening menus',
+    '"Happy winter!" title on start screen (not translated)',
+    'Polish language added',
+    'FPS setting removed'
+  ], changesRu: [
+    'Белая зимняя тема (меню)',
+    'Листья заменены синими снежинками',
+    'Снежинки только на заставке (меньше нагрузки на GPU)',
+    '20 лёгких снежинок (без shadowBlur и поворота)',
+    'Эмодзи монеты заменено CSS-кружком (рисуется на всех устройствах)',
+    'Убраны фоны со стикерами / деревьями / цветами',
+    'Осталось 12 фонов',
+    'Исправлены лаги при открытии меню',
+    'Надпись "Happy winter!" на заставке (не переводится)',
+    'Добавлен польский язык',
+    'Убрана настройка FPS'
+  ], changesPl: [
+    'Biały zimowy motyw (menu)',
+    'Liście zastąpione niebieskimi płatkami śniegu',
+    'Płatki śniegu tylko na ekranie startowym (mniejsze obciążenie GPU)',
+    '20 lekkich płatków (bez shadowBlur i obrotu)',
+    'Emoji monety zastąpione okręgiem CSS (działa na wszystkich urządzeniach)',
+    'Usunięto tła z naklejkami / drzewami / kwiatami',
+    'Pozostało 12 teł',
+    'Naprawiono lagi przy otwieraniu menu',
+    'Napis "Happy winter!" na ekranie startowym (nie tłumaczony)',
+    'Dodano język polski',
+    'Usunięto ustawienie FPS'
+  ]},
+  { version: '1.6', date: '2026-10-16', changesEn: [
+    'SHOP with RENDERS tab: Flat / Outline / Gradient / Sketch / Neon',
+    'Coins economy: +1 per 10 points, +1 per PERFECT',
+    'Achievements: 10 / 50 / 100 / 200 / 500 / 1000 / 2000 points',
+    'CREDITS screen in main menu',
+    'AUTO-SAVE — CONTINUE button',
+    'Camera rises after every block',
+    '17 background palettes (CITRUS removed)',
+    'NO INTERNET screen',
+    'LANGUAGE switch: EN / RU'
+  ], changesRu: [
+    'МАГАЗИН с вкладкой RENDERS: Flat / Outline / Gradient / Sketch / Neon',
+    'Монеты: +1 за 10 очков, +1 за PERFECT',
+    'Достижения: 10 / 50 / 100 / 200 / 500 / 1000 / 2000 очков',
+    'Экран CREDITS в главном меню',
+    'АВТОСОХРАНЕНИЕ — кнопка ПРОДОЛЖИТЬ',
+    'Камера поднимается после каждой плиты',
+    '17 фоновых палитр (CITRUS убран)',
+    'Экран NO INTERNET',
+    'Переключение языка: EN / RU'
+  ], changesPl: [
+    'SKLEP z zakładką RENDERS: Flat / Outline / Gradient / Sketch / Neon',
+    'Ekonomia monet: +1 za 10 punktów, +1 za PERFECT',
+    'Osiągnięcia: 10 / 50 / 100 / 200 / 500 / 1000 / 2000 punktów',
+    'Ekran CREDITS w menu głównym',
+    'AUTOSAVE — przycisk KONTYNUUJ',
+    'Kamera podnosi się po każdym bloku',
+    '17 palet tła (CITRUS usunięty)',
+    'Ekran NO INTERNET',
+    'Przełącznik języka: EN / RU'
+  ]},
+  { version: '1.5.1', date: '2026-10-16', changesEn: [
+    'Coins for score', 'Remade menu design', 'Internet connection required',
+    'New language — Russian', 'Achievements'
+  ], changesRu: [
+    'Монеты за очки', 'Новое меню', 'Нужен интернет',
+    'Новый язык — Русский', 'Достижения'
+  ], changesPl: [
+    'Monety za punkty', 'Nowy wygląd menu', 'Wymagane połączenie z internetem',
+    'Nowy język — rosyjski', 'Osiągnięcia'
+  ]},
+  { version: '1.5.0', date: '2026-10-15', changesEn: ['Orange menu theme'], changesRu: ['Оранжевая тема меню'], changesPl: ['Pomarańczowy motyw menu']},
+  { version: '1.4.0', date: '2026-10-14', changesEn: ['Restructured menu','SETTINGS separate','CHANGELOG slide-in panel'], changesRu: ['Переделано меню','НАСТРОЙКИ отдельно','CHANGELOG панель'], changesPl: ['Przebudowa menu','USTAWIENIA osobno','Panel ZMIANY']},
+  { version: '1.3.0', date: '2026-10-12', changesEn: ['Best score saving','Game Over screen'], changesRu: ['Сохранение рекорда','Экран проигрыша'], changesPl: ['Zapis rekordu','Ekran końca gry']},
+  { version: '1.0.0', date: '2026-10-08', changesEn: ['Initial release'], changesRu: ['Первый релиз'], changesPl: ['Pierwsze wydanie']}
+];
+function renderChangelog() {
+  const list = document.getElementById('changelogList');
+  list.innerHTML = CHANGELOG.map(v => {
+    let changes;
+    if (currentLang === 'ru') changes = v.changesRu;
+    else if (currentLang === 'pl') changes = v.changesPl;
+    else changes = v.changesEn;
+    changes = changes || v.changesEn || [];
+    return `
+      <div class="ver ${v.current ? 'current' : ''}">
+        <h3>v${v.version}${v.current ? '<span class="badge">CURRENT</span>' : ''}</h3>
+        <div class="date">${v.date}</div>
+        <ul>${changes.map(c => `<li>${c}</li>`).join('')}</ul>
+      </div>
+    `;
+  }).join('');
+}
+renderChangelog();
+document.getElementById('version').textContent = 'v' + CHANGELOG[0].version;
+
+let playing = false;
+let onStartScreen = true;
+
+// ===== SNOWFLAKES (only on start screen) =====
+(function() {
+  const leafCanvas = document.getElementById('leafCanvas');
+  const lctx = leafCanvas.getContext('2d');
+  let LW = 0, LH = 0, ldpr = 1;
+  function leafResize() {
+    ldpr = window.devicePixelRatio || 1;
+    LW = window.innerWidth; LH = window.innerHeight;
+    leafCanvas.width = Math.round(LW * ldpr);
+    leafCanvas.height = Math.round(LH * ldpr);
+    leafCanvas.style.width = LW + 'px';
+    leafCanvas.style.height = LH + 'px';
+    lctx.setTransform(ldpr, 0, 0, ldpr, 0, 0);
+  }
+  leafResize();
+  window.addEventListener('resize', leafResize);
+  window.addEventListener('orientationchange', () => setTimeout(leafResize, 250));
+  const flakes = [];
+  const MAX_FLAKES = 20;
+  function makeFlake(initial) {
+    return {
+      x: Math.random() * LW,
+      y: initial ? Math.random() * LH : -30 - Math.random() * 100,
+      size: 7 + Math.random() * 11,
+      vy: 0.4 + Math.random() * 1.0,
+      vx: (Math.random() - 0.5) * 0.6,
+      sway: Math.random() * Math.PI * 2,
+      swaySpeed: 0.01 + Math.random() * 0.02,
+      swayAmp: 0.5 + Math.random() * 1.0,
+      alpha: 0.55 + Math.random() * 0.4
+    };
+  }
+  for (let i = 0; i < MAX_FLAKES; i++) flakes.push(makeFlake(true));
+  function drawFlake(f) {
+    lctx.globalAlpha = f.alpha;
+    lctx.strokeStyle = '#1b4f87';
+    lctx.lineWidth = 1;
+    const r = f.size / 2;
+    lctx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      lctx.moveTo(f.x, f.y);
+      lctx.lineTo(f.x + Math.cos(a) * r, f.y + Math.sin(a) * r);
+    }
+    lctx.stroke();
+  }
+  function leafLoop() {
+    if (!onStartScreen) {
+      if (lctx.__dirty !== false) {
+        lctx.clearRect(0, 0, LW, LH);
+        lctx.__dirty = false;
+      }
+      requestAnimationFrame(leafLoop);
+      return;
+    }
+    lctx.__dirty = true;
+    lctx.clearRect(0, 0, LW, LH);
+    for (let i = 0; i < flakes.length; i++) {
+      const f = flakes[i];
+      f.sway += f.swaySpeed;
+      f.x += f.vx + Math.sin(f.sway) * f.swayAmp * 0.5;
+      f.y += f.vy;
+      if (f.y > LH + 40 || f.x < -60 || f.x > LW + 60) {
+        flakes[i] = makeFlake(false);
+      } else {
+        drawFlake(f);
+      }
+    }
+    lctx.globalAlpha = 1;
+    requestAnimationFrame(leafLoop);
+  }
+  leafLoop();
+})();
+
+const BG_PALETTES = [
+  { name: 'PINK',      top: '#e84a6f', bot: '#c73e63' },
+  { name: 'TEAL',      top: '#4ec9a8', bot: '#2b8a72' },
+  { name: 'PURPLE',    top: '#bf5af2', bot: '#5a189a' },
+  { name: 'SUNSET',    top: '#ff9500', bot: '#c1121f' },
+  { name: 'OCEAN',     top: '#3498db', bot: '#1c5c8a' },
+  { name: 'FOREST',    top: '#27ae60', bot: '#145a32' },
+  { name: 'NIGHT',     top: '#2c3e50', bot: '#000000' },
+  { name: 'GOLD',      top: '#ffd700', bot: '#b8860b' },
+  { name: 'MINT',      top: '#a8e6cf', bot: '#3bb78f' },
+  { name: 'STARRY',    top: '#0a1a4a', bot: '#020818', decor: 'stars' },
+  { name: 'MAGIC',     top: '#8338ec', bot: '#3a0ca3', decor: 'stars' },
+  { name: 'AURORA',    top: '#00f5d4', bot: '#3a0ca3', decor: 'stars' }
+];
+
+const RENDERS = [
+  { id: 'flat',     name: 'Flat',     price: 0,   desc: 'Classic flat colors' },
+  { id: 'outline',  name: 'Outline',  price: 10,  desc: 'Bold black outlines' },
+  { id: 'gradient', name: 'Gradient', price: 50,  desc: 'Soft vertical gradient' },
+  { id: 'sketch',   name: 'Sketch',   price: 50,  desc: 'Hand-drawn lines' },
+  { id: 'neon',     name: 'Neon',     price: 200, desc: 'Glowing neon edges' }
+];
+let ownedRenders = { flat: true };
+let activeRender = 'flat';
+function loadRenders() {
+  try {
+    const raw = localStorage.getItem('stack3d_owned_renders');
+    if (raw) {
+      const parsed = JSON.parse(raw) || {};
+      ownedRenders = Object.assign({ flat: true }, parsed);
+    }
+    const act = localStorage.getItem('stack3d_active_render');
+    if (act && RENDERS.some(r => r.id === act)) activeRender = act;
+  } catch (e) {
+    ownedRenders = { flat: true };
+    activeRender = 'flat';
+  }
+}
+function saveRenders() {
+  try {
+    localStorage.setItem('stack3d_owned_renders', JSON.stringify(ownedRenders));
+    localStorage.setItem('stack3d_active_render', activeRender);
+  } catch (e) {}
+}
+
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const scoreEl = document.getElementById('score');
+const bestEl = document.getElementById('best');
+const coinsHudEl = document.getElementById('coinsHudValue');
+const menuCoinsEl = document.getElementById('menuCoins');
+const shopCoinsEl = document.getElementById('shopCoinsValue');
+const modeLabel = document.getElementById('modeLabel');
+const hintEl = document.getElementById('hint');
+const perfectEl = document.getElementById('perfect');
+const gameoverEl = document.getElementById('gameover');
+const finalScoreEl = document.getElementById('finalScore');
+const bestScoreEl = document.getElementById('bestScore');
+const restartBtn = document.getElementById('restartBtn');
+const mainMenuBtn = document.getElementById('mainMenuBtn');
+const startEl = document.getElementById('start');
+const startMenuBtn = document.getElementById('startMenuBtn');
+const mainMenuEl = document.getElementById('mainMenu');
+const modeMenuEl = document.getElementById('modeMenu');
+const achievementsMenuEl = document.getElementById('achievementsMenu');
+const settingsMenuEl = document.getElementById('settingsMenu');
+const menuIcon = document.getElementById('menuIcon');
+const playBtn = document.getElementById('playBtn');
+const shopBtn = document.getElementById('shopBtn');
+const continueBtn = document.getElementById('continueBtn');
+const achievementsBtn = document.getElementById('achievementsBtn');
+const achievementsClose = document.getElementById('achievementsClose');
+const settingsBtn = document.getElementById('settingsBtn');
+const changelogBtn = document.getElementById('changelogBtn');
+const startGameBtn = document.getElementById('startGameBtn');
+const modeMenuClose = document.getElementById('modeMenuClose');
+const settingsClose = document.getElementById('settingsClose');
+const toggleTimeBg = document.getElementById('toggleTimeBg');
+const bgColorBtn = document.getElementById('bgColorBtn');
+const toggleParticles = document.getElementById('toggleParticles');
+const toggleSound = document.getElementById('toggleSound');
+const langEn = document.getElementById('langEn');
+const langRu = document.getElementById('langRu');
+const langPl = document.getElementById('langPl');
+const changelogPanel = document.getElementById('changelogPanel');
+const changelogOverlay = document.getElementById('changelogOverlay');
+const changelogClose = document.getElementById('changelogClose');
+const paletteOverlay = document.getElementById('paletteOverlay');
+const paletteGrid = document.getElementById('paletteGrid');
+const paletteClose = document.getElementById('paletteClose');
+const creditsBtn = document.getElementById('creditsBtn');
+const creditsOverlay = document.getElementById('creditsOverlay');
+const creditsClose = document.getElementById('creditsClose');
+const shopOverlay = document.getElementById('shopOverlay');
+const shopClose = document.getElementById('shopClose');
+const renderGrid = document.getElementById('renderGrid');
+const confirmOverlay = document.getElementById('confirmOverlay');
+const confirmTitle = document.getElementById('confirmTitle');
+const confirmText = document.getElementById('confirmText');
+const confirmPrice = document.getElementById('confirmPrice');
+const confirmYes = document.getElementById('confirmYes');
+const confirmNo = document.getElementById('confirmNo');
+
+let gameStarted = false;
+let settings = { mode: 'classic', timeBg: true, bgIndex: 0, particles: true, sound: true, lang: 'en' };
+let W, H, dpr;
+let ISO_SCALE = 0.55;
+let MIN_DIM = 0;
+
+let coins = 0;
+function loadCoins() { try { coins = parseInt(localStorage.getItem('stack3d_coins') || '0', 10) || 0; } catch (e) { coins = 0; } }
+function saveCoins() { try { localStorage.setItem('stack3d_coins', String(coins)); } catch (e) {} }
+function updateCoinsUI() {
+  if (coinsHudEl) coinsHudEl.textContent = coins;
+  if (menuCoinsEl) menuCoinsEl.textContent = coins;
+  if (shopCoinsEl) shopCoinsEl.textContent = coins;
+}
+function addCoins(n) {
+  coins += n;
+  saveCoins();
+  updateCoinsUI();
+}
+
+const SAVE_KEY = 'stack3d_lastgame';
+function saveGame() {
+  try {
+    const data = { blocks, current, score, cameraOffsetY, patternIndex, mode: settings.mode };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+function loadGame() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data || !data.blocks || !data.blocks.length) return null;
+    return data;
+  } catch (e) { return null; }
+}
+function clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }
+function hasSave() { return loadGame() !== null; }
+function updateContinueBtn() {
+  if (continueBtn) continueBtn.style.display = hasSave() ? 'block' : 'none';
+}
+
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth; H = window.innerHeight;
+  MIN_DIM = Math.min(W, H);
+  canvas.width = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  computeScale();
+}
+function computeScale() {
+  const baseRef = 420;
+  const raw = MIN_DIM / baseRef;
+  ISO_SCALE = Math.max(0.35, Math.min(1.0, raw * 0.65 + 0.1));
+}
+window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', () => { setTimeout(resize, 250); });
+resize();
+function loadSettings() {
+  try { const raw = localStorage.getItem('stack3d_settings'); if (raw) Object.assign(settings, JSON.parse(raw)); } catch (e) {}
+  if (settings.lang === 'ru' || settings.lang === 'en' || settings.lang === 'pl') currentLang = settings.lang;
+  if (typeof settings.bgIndex !== 'number' || settings.bgIndex >= BG_PALETTES.length || settings.bgIndex < 0) {
+    settings.bgIndex = 0;
+  }
+}
+function saveSettings() { try { localStorage.setItem('stack3d_settings', JSON.stringify(settings)); } catch (e) {} }
+function loadBest() { try { return parseInt(localStorage.getItem('stack3d_best') || '0', 10) || 0; } catch (e) { return 0; } }
+function saveBest(v) { try { localStorage.setItem('stack3d_best', String(v)); } catch (e) {} }
+let audioCtx = null;
+function ensureAudio() {
+  if (!settings.sound) return;
+  if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audioCtx = null; } }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+function beep(freq, duration, type, volume) {
+  if (!settings.sound || !audioCtx) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type || 'square';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(volume || 0.06, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + duration);
+  } catch (e) {}
+}
+function playDrop() { beep(220, 0.08, 'square', 0.06); }
+function playPerfect() { beep(880, 0.12, 'sine', 0.10); setTimeout(() => beep(1320, 0.10, 'sine', 0.08), 60); }
+function playCut() { beep(140, 0.06, 'sawtooth', 0.05); }
+function playAchievement() {
+  beep(659.25, 0.12, 'sine', 0.08);
+  setTimeout(() => beep(880, 0.12, 'sine', 0.08), 100);
+  setTimeout(() => beep(1318.5, 0.25, 'sine', 0.09), 200);
+}
+function playClick() { beep(660, 0.06, 'square', 0.05); }
+function iso(x, y, z) {
+  const scale = ISO_SCALE;
+  const sx = (x - y) * Math.cos(Math.PI / 6) * scale;
+  const sy = (x + y) * Math.sin(Math.PI / 6) * scale - z * scale;
+  return { x: W / 2 + sx, y: H * 0.65 + sy };
+}
+function hexToRgb(hex) {
+  const c = hex.replace('#','');
+  return { r: parseInt(c.substr(0,2),16), g: parseInt(c.substr(2,2),16), b: parseInt(c.substr(4,2),16) };
+}
+function lerpColor(a, b, t) {
+  const ca = hexToRgb(a), cb = hexToRgb(b);
+  return `rgb(${Math.round(ca.r+(cb.r-ca.r)*t)},${Math.round(ca.g+(cb.g-ca.g)*t)},${Math.round(ca.b+(cb.b-ca.b)*t)})`;
+}
+let blocks, current, score, best, gameOver, cameraOffsetY, flashAlpha, patternIndex;
+let fallingPieces, particles, gameStartTime, perfectCount, currentSpeed;
+function getPerfectRange() { return settings.mode === 'hard' ? 12 : 25; }
+function blockSize() { return 200 * ISO_SCALE / 0.55; }
+function blockHeight() { return 40 * ISO_SCALE / 0.55; }
+function init() {
+  blocks = []; fallingPieces = []; particles = [];
+  score = 0; perfectCount = 0; best = loadBest();
+  gameOver = false; cameraOffsetY = 0; flashAlpha = 0; patternIndex = 0;
+  currentSpeed = 3.5;
+  gameStartTime = performance.now();
+  scoreEl.textContent = '0';
+  updateBestLabel();
+  updateModeLabel();
+  hintEl.style.display = 'block';
+  gameoverEl.style.display = 'none';
+  perfectEl.classList.remove('show');
+  const bs = blockSize();
+  blocks.push({ x: 0, y: 0, z: 0, sizeX: bs, sizeY: bs, color: '#ff3b30' });
+  spawnBlock();
+  clearSave();
+  updateContinueBtn();
+}
+function restoreGame(data) {
+  blocks = data.blocks;
+  current = data.current;
+  score = data.score || 0;
+  cameraOffsetY = data.cameraOffsetY || 0;
+  patternIndex = data.patternIndex || 0;
+  fallingPieces = []; particles = [];
+  gameOver = false; flashAlpha = 0;
+  currentSpeed = 3.5;
+  best = loadBest();
+  settings.mode = data.mode || settings.mode;
+  saveSettings();
+  scoreEl.textContent = score;
+  updateBestLabel();
+  updateModeLabel();
+  hintEl.style.display = 'none';
+  gameoverEl.style.display = 'none';
+  perfectEl.classList.remove('show');
+  gameStartTime = performance.now();
+}
+const PATTERN = [
+  { axis: 'x', dir: 1 }, { axis: 'y', dir: -1 },
+  { axis: 'x', dir: -1 }, { axis: 'y', dir: 1 }
+];
+const COLORS = ['#ff3b30','#ff9500','#ffd60a','#34d946','#0a84ff','#bf5af2','#30d5c8','#ff2d95'];
+function spawnBlock() {
+  const last = blocks[blocks.length - 1];
+  const step = PATTERN[patternIndex % PATTERN.length];
+  patternIndex++;
+  const limit = 400 * ISO_SCALE / 0.55;
+  const startX = step.axis === 'x' ? -limit * step.dir : last.x;
+  const startY = step.axis === 'y' ? -limit * step.dir : last.y;
+  current = {
+    x: startX, y: startY, z: last.z + blockHeight(),
+    sizeX: last.sizeX, sizeY: last.sizeY,
+    color: COLORS[blocks.length % COLORS.length],
+    axis: step.axis, dir: step.dir, base: last, moving: true
+  };
+}
+function spawnFallingPiece(x, y, z, sizeX, sizeY, color, axis, side) {
+  fallingPieces.push({ x, y, z, sizeX, sizeY, color, vy: 0, axis, side, alpha: 1 });
+}
+function spawnParticles(cx, cy, cz, color) {
+  if (!settings.particles) return;
+  for (let i = 0; i < 14; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const sp = 1.5 + Math.random() * 3;
+    particles.push({ x: cx, y: cy, z: cz, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, vz: 1 + Math.random() * 3, life: 1, color });
+  }
+}
+function showPerfect() {
+  perfectEl.classList.remove('show');
+  void perfectEl.offsetWidth;
+  perfectEl.classList.add('show');
+}
+function drop() {
+  if (gameOver) return;
+  ensureAudio();
+  if (hintEl.style.display !== 'none') hintEl.style.display = 'none';
+  const b = current, last = b.base;
+  const lastCenter = b.axis === 'x' ? last.x : last.y;
+  const curCenter  = b.axis === 'x' ? b.x    : b.y;
+  const lastSize   = b.axis === 'x' ? last.sizeX : last.sizeY;
+  const curSize    = b.axis === 'x' ? b.sizeX    : b.sizeY;
+  const offset = curCenter - lastCenter;
+  const diff = Math.abs(offset);
+  const lastMin = lastCenter - lastSize / 2;
+  const lastMax = lastCenter + lastSize / 2;
+  const curMin  = curCenter  - curSize  / 2;
+  const curMax  = curCenter  + curSize  / 2;
+  const interMin = Math.max(lastMin, curMin);
+  const interMax = Math.min(lastMax, curMax);
+  const interSize = interMax - interMin;
+  if (interSize <= 0) { endGame(); return; }
+  let perfectThisTurn = false;
+  if (diff <= getPerfectRange()) {
+    blocks.push({ x: last.x, y: last.y, z: b.z, sizeX: last.sizeX, sizeY: last.sizeY, color: b.color });
+    flashAlpha = 0.5; perfectCount++;
+    showPerfect(); playPerfect();
+    perfectThisTurn = true;
+  } else {
+    const newCenter = (interMin + interMax) / 2;
+    const goRight = offset > 0;
+    let cutMin, cutMax, cutSide;
+    if (goRight) { cutMin = lastMax; cutMax = curMax; cutSide = 1; }
+    else { cutMin = curMin; cutMax = lastMin; cutSide = -1; }
+    const cutSize = cutMax - cutMin;
+    const cutCenter = (cutMin + cutMax) / 2;
+    if (cutSize > 0.5) {
+      let cx = b.x, cy = b.y;
+      if (b.axis === 'x') cx = cutCenter; else cy = cutCenter;
+      const bs = blockSize();
+      const sx = b.axis === 'x' ? cutSize : bs;
+      const sy = b.axis === 'y' ? cutSize : bs;
+      spawnFallingPiece(cx, cy, b.z, sx, sy, b.color, b.axis, cutSide);
+      spawnParticles(cx, cy, b.z + blockHeight() / 2, b.color);
+      playCut();
+    }
+    const sizeX = b.axis === 'x' ? interSize : b.sizeX;
+    const sizeY = b.axis === 'y' ? interSize : b.sizeY;
+    const newX = b.axis === 'x' ? newCenter : last.x;
+    const newY = b.axis === 'y' ? newCenter : last.y;
+    blocks.push({ x: newX, y: newY, z: b.z, sizeX, sizeY, color: b.color });
+    playDrop();
+  }
+  if (score > 0 && score % 10 === 0) addCoins(1);
+  if (perfectThisTurn) addCoins(1);
+  score++;
+  scoreEl.textContent = score;
+  if (settings.mode === 'speed') currentSpeed = 3.5 + score * 0.05;
+  const targetCamY = Math.max(0, (blocks.length - 1) * blockHeight());
+  cameraOffsetY += (targetCamY - cameraOffsetY) * 0.3;
+  spawnBlock();
+  saveGame();
+  checkAchievements(score);
+}
+function endGame() {
+  gameOver = true;
+  if (score > best) { best = score; saveBest(best); }
+  updateBestLabel();
+  finalScoreEl.textContent = score;
+  bestScoreEl.textContent = best;
+  gameoverEl.style.display = 'flex';
+  clearSave();
+  checkAchievements(score);
+}
+function restart() { init(); }
+window.restart = restart;
+function onRestart(e) { if (e) { e.preventDefault(); e.stopPropagation(); } restart(); }
+restartBtn.addEventListener('click', onRestart);
+restartBtn.addEventListener('touchstart', onRestart, { passive: false });
+function hideAllScreens() {
+  mainMenuEl.classList.remove('open');
+  modeMenuEl.classList.remove('open');
+  achievementsMenuEl.classList.remove('open');
+  settingsMenuEl.classList.remove('open');
+  paletteOverlay.classList.remove('open');
+  changelogPanel.classList.remove('open');
+  changelogOverlay.classList.remove('open');
+  creditsOverlay.classList.remove('open');
+  shopOverlay.classList.remove('open');
+  confirmOverlay.classList.remove('open');
+}
+function showMainMenu() {
+  hideAllScreens();
+  mainMenuEl.classList.add('open');
+  menuIcon.classList.remove('show');
+  playing = false;
+  updateCoinsUI();
+  updateContinueBtn();
+}
+function openPlay() {
+  mainMenuEl.classList.remove('open');
+  modeMenuEl.classList.add('open');
+}
+function openAchievements() {
+  mainMenuEl.classList.remove('open');
+  renderAchievements();
+  achievementsMenuEl.classList.add('open');
+}
+function openSettings() {
+  mainMenuEl.classList.remove('open');
+  updateMenuUI();
+  settingsMenuEl.classList.add('open');
+}
+function openChangelog() {
+  mainMenuEl.classList.remove('open');
+  changelogPanel.classList.add('open');
+  changelogOverlay.classList.add('open');
+}
+function openCredits() {
+  mainMenuEl.classList.remove('open');
+  creditsOverlay.classList.add('open');
+}
+function closeCredits(e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  creditsOverlay.classList.remove('open');
+  showMainMenu();
+}
+function closeChangelog(e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  changelogPanel.classList.remove('open');
+  changelogOverlay.classList.remove('open');
+  if (!playing || gameOver) {
+    showMainMenu();
+  }
+}
+
+// ===== CONFIRM =====
+let pendingRender = null;
+function confirmPurchase(render) {
+  pendingRender = render;
+  confirmTitle.textContent = t('confirmTitle');
+  confirmText.textContent = t('confirmBuy') + ' ' + render.name;
+  confirmPrice.textContent = t('confirmFor') + ' ' + render.price;
+  confirmYes.textContent = t('yes');
+  confirmNo.textContent = t('no');
+  confirmOverlay.classList.add('open');
+}
+function closeConfirm() {
+  confirmOverlay.classList.remove('open');
+  pendingRender = null;
+}
+function doBuyRender(r) {
+  if (coins >= r.price) {
+    coins -= r.price;
+    saveCoins();
+    ownedRenders[r.id] = true;
+    activeRender = r.id;
+    saveRenders();
+    updateCoinsUI();
+    renderShop();
+  }
+}
+confirmYes.addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  const r = pendingRender;
+  closeConfirm();
+  if (r) doBuyRender(r);
+});
+confirmYes.addEventListener('touchstart', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  const r = pendingRender;
+  closeConfirm();
+  if (r) doBuyRender(r);
+}, { passive: false });
+confirmNo.addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  closeConfirm();
+});
+confirmNo.addEventListener('touchstart', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  closeConfirm();
+}, { passive: false });
+
+// ===== SHOP =====
+function renderRenderPreview(r) {
+  const c = document.createElement('canvas');
+  c.width = 60; c.height = 60;
+  const cx = c.getContext('2d');
+  cx.fillStyle = '#eaf4ff';
+  cx.fillRect(0, 0, 60, 60);
+  drawPreviewCube(cx, r.id);
+  return c;
+}
+function drawPreviewCube(cx, style) {
+  const s = 18;
+  const topColor = '#ff9500', leftColor = '#c1121f', rightColor = '#8b0000';
+  const ox = 30, oy = 22;
+  const p1 = { x: ox,        y: oy - s*0.6 };
+  const p2 = { x: ox + s,    y: oy };
+  const p3 = { x: ox,        y: oy + s*0.6 };
+  const p4 = { x: ox - s,    y: oy };
+  const b2 = { x: ox + s,    y: oy + s };
+  const b3 = { x: ox,        y: oy + s*0.6 + s };
+  const b4 = { x: ox - s,    y: oy + s };
+  cx.save();
+  if (style === 'flat') {
+    cx.fillStyle = topColor; cx.beginPath(); cx.moveTo(p1.x,p1.y); cx.lineTo(p2.x,p2.y); cx.lineTo(p3.x,p3.y); cx.lineTo(p4.x,p4.y); cx.closePath(); cx.fill();
+    cx.fillStyle = leftColor; cx.beginPath(); cx.moveTo(p4.x,p4.y); cx.lineTo(p3.x,p3.y); cx.lineTo(b3.x,b3.y); cx.lineTo(b4.x,b4.y); cx.closePath(); cx.fill();
+    cx.fillStyle = rightColor; cx.beginPath(); cx.moveTo(p3.x,p3.y); cx.lineTo(p2.x,p2.y); cx.lineTo(b2.x,b2.y); cx.lineTo(b3.x,b3.y); cx.closePath(); cx.fill();
+  } else if (style === 'outline') {
+    cx.fillStyle = topColor; cx.beginPath(); cx.moveTo(p1.x,p1.y); cx.lineTo(p2.x,p2.y); cx.lineTo(p3.x,p3.y); cx.lineTo(p4.x,p4.y); cx.closePath(); cx.fill();
+    cx.fillStyle = leftColor; cx.beginPath(); cx.moveTo(p4.x,p4.y); cx.lineTo(p3.x,p3.y); cx.lineTo(b3.x,b3.y); cx.lineTo(b4.x,b4.y); cx.closePath(); cx.fill();
+    cx.fillStyle = rightColor; cx.beginPath(); cx.moveTo(p3.x,p3.y); cx.lineTo(p2.x,p2.y); cx.lineTo(b2.x,b2.y); cx.lineTo(b3.x,b3.y); cx.closePath(); cx.fill();
+    cx.strokeStyle = '#000'; cx.lineWidth = 2;
+    cx.beginPath(); cx.moveTo(p1.x,p1.y); cx.lineTo(p2.x,p2.y); cx.lineTo(p3.x,p3.y); cx.lineTo(p4.x,p4.y); cx.closePath();
+    cx.moveTo(p4.x,p4.y); cx.lineTo(b4.x,b4.y); cx.lineTo(b3.x,b3.y); cx.moveTo(b3.x,b3.y); cx.lineTo(b2.x,b2.y); cx.lineTo(p2.x,p2.y);
+    cx.stroke();
+  } else if (style === 'gradient') {
+    const gTop = cx.createLinearGradient(p4.x, p1.y, p4.x, p3.y);
+    gTop.addColorStop(0, '#ffb347'); gTop.addColorStop(1, '#ff9500');
+    cx.fillStyle = gTop; cx.beginPath(); cx.moveTo(p1.x,p1.y); cx.lineTo(p2.x,p2.y); cx.lineTo(p3.x,p3.y); cx.lineTo(p4.x,p4.y); cx.closePath(); cx.fill();
+    const gL = cx.createLinearGradient(p4.x, p4.y, b4.x, b4.y);
+    gL.addColorStop(0, '#c1121f'); gL.addColorStop(1, '#5a0a0a');
+    cx.fillStyle = gL; cx.beginPath(); cx.moveTo(p4.x,p4.y); cx.lineTo(p3.x,p3.y); cx.lineTo(b3.x,b3.y); cx.lineTo(b4.x,b4.y); cx.closePath(); cx.fill();
+    const gR = cx.createLinearGradient(p2.x, p2.y, b2.x, b2.y);
+    gR.addColorStop(0, '#8b0000'); gR.addColorStop(1, '#3a0000');
+    cx.fillStyle = gR; cx.beginPath(); cx.moveTo(p3.x,p3.y); cx.lineTo(p2.x,p2.y); cx.lineTo(b2.x,b2.y); cx.lineTo(b3.x,b3.y); cx.closePath(); cx.fill();
+  } else if (style === 'sketch') {
+    cx.fillStyle = 'rgba(255,149,0,0.7)'; cx.beginPath(); cx.moveTo(p1.x,p1.y); cx.lineTo(p2.x,p2.y); cx.lineTo(p3.x,p3.y); cx.lineTo(p4.x,p4.y); cx.closePath(); cx.fill();
+    cx.fillStyle = 'rgba(193,18,31,0.7)'; cx.beginPath(); cx.moveTo(p4.x,p4.y); cx.lineTo(p3.x,p3.y); cx.lineTo(b3.x,b3.y); cx.lineTo(b4.x,b4.y); cx.closePath(); cx.fill();
+    cx.fillStyle = 'rgba(139,0,0,0.7)'; cx.beginPath(); cx.moveTo(p3.x,p3.y); cx.lineTo(p2.x,p2.y); cx.lineTo(b2.x,b2.y); cx.lineTo(b3.x,b3.y); cx.closePath(); cx.fill();
+    cx.strokeStyle = '#111'; cx.lineWidth = 1.5;
+    for (let k = 0; k < 3; k++) {
+      cx.beginPath(); cx.moveTo(p1.x + Math.random()*2-1, p1.y); cx.lineTo(p2.x, p2.y); cx.lineTo(p3.x, p3.y); cx.lineTo(p4.x, p4.y); cx.closePath(); cx.stroke();
+    }
+    cx.beginPath(); cx.moveTo(p4.x,p4.y); cx.lineTo(b4.x,b4.y); cx.lineTo(b3.x,b3.y); cx.moveTo(b3.x,b3.y); cx.lineTo(b2.x,b2.y); cx.lineTo(p2.x,p2.y); cx.stroke();
+  } else if (style === 'neon') {
+    cx.fillStyle = '#111'; cx.fillRect(0,0,60,60);
+    cx.strokeStyle = '#00f5ff'; cx.lineWidth = 2;
+    cx.shadowColor = '#00f5ff'; cx.shadowBlur = 10;
+    cx.beginPath(); cx.moveTo(p1.x,p1.y); cx.lineTo(p2.x,p2.y); cx.lineTo(p3.x,p3.y); cx.lineTo(p4.x,p4.y); cx.closePath(); cx.stroke();
+    cx.beginPath(); cx.moveTo(p4.x,p4.y); cx.lineTo(b4.x,b4.y); cx.lineTo(b3.x,b3.y); cx.moveTo(b3.x,b3.y); cx.lineTo(b2.x,b2.y); cx.lineTo(p2.x,p2.y); cx.stroke();
+    cx.shadowBlur = 0;
+  }
+  cx.restore();
+}
+function renderShop() {
+  if (!renderGrid) return;
+  updateCoinsUI();
+  renderGrid.innerHTML = '';
+  RENDERS.forEach(r => {
+    const isOwned = !!ownedRenders[r.id];
+    const isActive = activeRender === r.id;
+    const item = document.createElement('div');
+    item.className = 'renderItem' + (isOwned ? ' owned' : '') + (isActive ? ' active' : '');
+    const preview = renderRenderPreview(r);
+    const previewWrap = document.createElement('div');
+    previewWrap.className = 'renderPreview';
+    previewWrap.appendChild(preview);
+    item.appendChild(previewWrap);
+    const nameEl = document.createElement('div');
+    nameEl.className = 'renderName';
+    nameEl.textContent = r.name;
+    item.appendChild(nameEl);
+    const priceEl = document.createElement('div');
+    priceEl.className = 'renderPrice';
+    if (isOwned) {
+      priceEl.textContent = isActive ? t('selected') : t('owned');
+    } else {
+      priceEl.innerHTML = '<span class="coinDot"></span>' + r.price;
+    }
+    item.appendChild(priceEl);
+    if (isActive) {
+      const sel = document.createElement('div');
+      sel.className = 'renderSelected';
+      sel.textContent = '✓';
+      item.appendChild(sel);
+    }
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      onRenderClick(r);
+    });
+    item.addEventListener('touchstart', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      onRenderClick(r);
+    }, { passive: false });
+    renderGrid.appendChild(item);
+  });
+}
+function onRenderClick(r) {
+  ensureAudio();
+  playClick();
+  if (ownedRenders[r.id]) {
+    activeRender = r.id;
+    saveRenders();
+    renderShop();
+    return;
+  }
+  if (coins >= r.price) {
+    confirmPurchase(r);
+  } else {
+    const item = Array.from(document.querySelectorAll('.renderItem')).find(el => el.querySelector('.renderName') && el.querySelector('.renderName').textContent === r.name);
+    if (item) {
+      item.style.transition = 'transform 0.1s';
+      item.style.transform = 'translateX(-4px)';
+      setTimeout(() => { item.style.transform = 'translateX(4px)'; }, 60);
+      setTimeout(() => { item.style.transform = ''; }, 120);
+    }
+  }
+}
+function openShop() {
+  hideAllScreens();
+  renderShop();
+  shopOverlay.classList.add('open');
+}
+function closeShop(e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  shopOverlay.classList.remove('open');
+  showMainMenu();
+}
+shopBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openShop(); });
+shopBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); openShop(); }, { passive: false });
+shopClose.addEventListener('click', closeShop);
+shopClose.addEventListener('touchstart', closeShop, { passive: false });
+shopOverlay.addEventListener('click', (e) => { if (e.target === shopOverlay) closeShop(e); });
+
+playBtn.addEventListener('click', openPlay);
+playBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); openPlay(); }, { passive: false });
+achievementsBtn.addEventListener('click', openAchievements);
+achievementsBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); openAchievements(); }, { passive: false });
+achievementsClose.addEventListener('click', showMainMenu);
+achievementsClose.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); showMainMenu(); }, { passive: false });
+settingsBtn.addEventListener('click', openSettings);
+settingsBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); openSettings(); }, { passive: false });
+changelogBtn.addEventListener('click', openChangelog);
+changelogBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); openChangelog(); }, { passive: false });
+creditsBtn.addEventListener('click', openCredits);
+creditsBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); openCredits(); }, { passive: false });
+creditsClose.addEventListener('click', closeCredits);
+creditsClose.addEventListener('touchstart', closeCredits, { passive: false });
+modeMenuClose.addEventListener('click', showMainMenu);
+modeMenuClose.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); showMainMenu(); }, { passive: false });
+settingsClose.addEventListener('click', showMainMenu);
+settingsClose.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); showMainMenu(); }, { passive: false });
+menuIcon.addEventListener('click', showMainMenu);
+menuIcon.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); showMainMenu(); }, { passive: false });
+mainMenuBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); showMainMenu(); });
+mainMenuBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); showMainMenu(); }, { passive: false });
+
+continueBtn.addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  const data = loadGame();
+  if (!data) { openPlay(); return; }
+  mainMenuEl.classList.remove('open');
+  startEl.classList.add('hidden');
+  onStartScreen = false;
+  playing = true;
+  menuIcon.classList.add('show');
+  restoreGame(data);
+});
+continueBtn.addEventListener('touchstart', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  const data = loadGame();
+  if (!data) { openPlay(); return; }
+  mainMenuEl.classList.remove('open');
+  startEl.classList.add('hidden');
+  onStartScreen = false;
+  playing = true;
+  menuIcon.classList.add('show');
+  restoreGame(data);
+}, { passive: false });
+
+function startPlay() {
+  hideAllScreens();
+  startEl.classList.add('hidden');
+  onStartScreen = false;
+  playing = true;
+  menuIcon.classList.add('show');
+  init();
+}
+startGameBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); startPlay(); });
+startGameBtn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); startPlay(); }, { passive: false });
+document.querySelectorAll('.modeBtn[data-mode]').forEach(btn => {
+  btn.addEventListener('click', () => { settings.mode = btn.dataset.mode; saveSettings(); updateMenuUI(); });
+});
+function updateMenuUI() {
+  document.querySelectorAll('.modeBtn[data-mode]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === settings.mode);
+  });
+  if (toggleTimeBg) toggleTimeBg.textContent = settings.timeBg ? t('timeBg') : t('timeBgOff');
+  if (bgColorBtn) bgColorBtn.style.display = 'block';
+  if (toggleParticles) toggleParticles.textContent = settings.particles ? t('particles') : t('particlesOff');
+  if (toggleSound) toggleSound.textContent = settings.sound ? t('sound') : t('soundOff');
+  if (langEn) langEn.classList.toggle('active', currentLang === 'en');
+  if (langRu) langRu.classList.toggle('active', currentLang === 'ru');
+  if (langPl) langPl.classList.toggle('active', currentLang === 'pl');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (el === toggleTimeBg || el === toggleParticles || el === toggleSound) return;
+    if (el.classList.contains('modeBtn') && el.dataset.mode) return;
+    if (el === langEn || el === langRu || el === langPl) return;
+    el.textContent = t(key);
+  });
+}
+toggleTimeBg.addEventListener('click', () => { settings.timeBg = !settings.timeBg; saveSettings(); updateMenuUI(); });
+toggleParticles.addEventListener('click', () => { settings.particles = !settings.particles; saveSettings(); updateMenuUI(); });
+toggleSound.addEventListener('click', () => { settings.sound = !settings.sound; saveSettings(); updateMenuUI(); });
+langEn.addEventListener('click', () => { currentLang = 'en'; settings.lang = 'en'; saveSettings(); applyLang(); updateMenuUI(); });
+langRu.addEventListener('click', () => { currentLang = 'ru'; settings.lang = 'ru'; saveSettings(); applyLang(); updateMenuUI(); });
+langPl.addEventListener('click', () => { currentLang = 'pl'; settings.lang = 'pl'; saveSettings(); applyLang(); updateMenuUI(); });
+function renderPalette() {
+  paletteGrid.innerHTML = BG_PALETTES.map((p, i) => {
+    const bg = `linear-gradient(180deg, ${p.top}, ${p.bot})`;
+    let decor = '';
+    if (p.decor === 'stars') {
+      decor = `<div style="position:absolute;inset:0;pointer-events:none">${Array.from({length:12}).map(() => {
+        const x = Math.random()*100, y = Math.random()*100, s = 1+Math.random()*2;
+        return `<div style="position:absolute;left:${x}%;top:${y}%;width:${s}px;height:${s}px;background:#fff;border-radius:50%;box-shadow:0 0 4px #fff"></div>`;
+      }).join('')}</div>`;
+    }
+    return `
+      <div class="paletteItem ${i === settings.bgIndex ? 'selected' : ''}" data-idx="${i}">
+        <div style="position:absolute;inset:0;background:${bg}"></div>
+        ${decor}
+        <div class="paletteName">${p.name}</div>
+      </div>
+    `;
+  }).join('');
+  paletteGrid.querySelectorAll('.paletteItem').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      settings.bgIndex = parseInt(item.dataset.idx, 10);
+      saveSettings(); renderPalette();
+    });
+    item.addEventListener('touchstart', (e) => {
+      e.stopPropagation(); e.preventDefault();
+      settings.bgIndex = parseInt(item.dataset.idx, 10);
+      saveSettings(); renderPalette();
+    }, { passive: false });
+  });
+}
+function openPalette(e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  renderPalette(); paletteOverlay.classList.add('open');
+}
+function closePalette(e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  paletteOverlay.classList.remove('open');
+}
+bgColorBtn.addEventListener('click', openPalette);
+bgColorBtn.addEventListener('touchstart', openPalette, { passive: false });
+paletteClose.addEventListener('click', closePalette);
+paletteClose.addEventListener('touchstart', closePalette, { passive: false });
+paletteOverlay.addEventListener('click', closePalette);
+changelogClose.addEventListener('click', closeChangelog);
+changelogClose.addEventListener('touchstart', closeChangelog, { passive: false });
+changelogOverlay.addEventListener('click', closeChangelog);
+changelogOverlay.addEventListener('touchstart', closeChangelog, { passive: false });
+
+// ===== DRAW BOX with RENDERS =====
+function drawBox(cx, cy, z, sizeX, sizeY, color, alpha) {
+  const h = blockHeight();
+  const hx = sizeX / 2, hy = sizeY / 2;
+  if (alpha !== undefined) ctx.globalAlpha = alpha;
+  const p1 = iso(cx - hx, cy - hy, z + h);
+  const p2 = iso(cx + hx, cy - hy, z + h);
+  const p3 = iso(cx + hx, cy + hy, z + h);
+  const p4 = iso(cx - hx, cy + hy, z + h);
+  const b2 = iso(cx + hx, cy - hy, z);
+  const b3 = iso(cx + hx, cy + hy, z);
+  const b4 = iso(cx - hx, cy + hy, z);
+
+  if (activeRender === 'flat') {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = shade(color, -0.25);
+    ctx.beginPath();
+    ctx.moveTo(p4.x, p4.y); ctx.lineTo(p3.x, p3.y);
+    ctx.lineTo(b3.x, b3.y); ctx.lineTo(b4.x, b4.y);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = shade(color, -0.45);
+    ctx.beginPath();
+    ctx.moveTo(p3.x, p3.y); ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(b2.x, b2.y); ctx.lineTo(b3.x, b3.y);
+    ctx.closePath(); ctx.fill();
+  } else if (activeRender === 'outline') {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = shade(color, -0.25);
+    ctx.beginPath();
+    ctx.moveTo(p4.x, p4.y); ctx.lineTo(p3.x, p3.y);
+    ctx.lineTo(b3.x, b3.y); ctx.lineTo(b4.x, b4.y);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = shade(color, -0.45);
+    ctx.beginPath();
+    ctx.moveTo(p3.x, p3.y); ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(b2.x, b2.y); ctx.lineTo(b3.x, b3.y);
+    ctx.closePath(); ctx.fill();
+    const outlineWidth = Math.max(1.5, ISO_SCALE * 3);
+    ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+    ctx.lineWidth = outlineWidth;
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y); ctx.closePath();
+    ctx.moveTo(p4.x, p4.y); ctx.lineTo(b4.x, b4.y);
+    ctx.lineTo(b3.x, b3.y);
+    ctx.moveTo(b3.x, b3.y); ctx.lineTo(b2.x, b2.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.stroke();
+  } else if (activeRender === 'gradient') {
+    const gTop = ctx.createLinearGradient(p4.x, p1.y, p4.x, p3.y);
+    gTop.addColorStop(0, shade(color, 0.18));
+    gTop.addColorStop(1, color);
+    ctx.fillStyle = gTop;
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y);
+    ctx.closePath(); ctx.fill();
+    const gLeft = ctx.createLinearGradient(p4.x, p4.y, b4.x, b4.y);
+    gLeft.addColorStop(0, shade(color, -0.2));
+    gLeft.addColorStop(1, shade(color, -0.5));
+    ctx.fillStyle = gLeft;
+    ctx.beginPath();
+    ctx.moveTo(p4.x, p4.y); ctx.lineTo(p3.x, p3.y);
+    ctx.lineTo(b3.x, b3.y); ctx.lineTo(b4.x, b4.y);
+    ctx.closePath(); ctx.fill();
+    const gRight = ctx.createLinearGradient(p2.x, p2.y, b2.x, b2.y);
+    gRight.addColorStop(0, shade(color, -0.35));
+    gRight.addColorStop(1, shade(color, -0.6));
+    ctx.fillStyle = gRight;
+    ctx.beginPath();
+    ctx.moveTo(p3.x, p3.y); ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(b2.x, b2.y); ctx.lineTo(b3.x, b3.y);
+    ctx.closePath(); ctx.fill();
+  } else if (activeRender === 'sketch') {
+    ctx.globalAlpha = (alpha !== undefined ? alpha : 1) * 0.75;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = shade(color, -0.25);
+    ctx.beginPath();
+    ctx.moveTo(p4.x, p4.y); ctx.lineTo(p3.x, p3.y);
+    ctx.lineTo(b3.x, b3.y); ctx.lineTo(b4.x, b4.y);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = shade(color, -0.45);
+    ctx.beginPath();
+    ctx.moveTo(p3.x, p3.y); ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(b2.x, b2.y); ctx.lineTo(b3.x, b3.y);
+    ctx.closePath(); ctx.fill();
+    ctx.globalAlpha = alpha !== undefined ? alpha : 1;
+    ctx.strokeStyle = 'rgba(0,0,0,0.7)';
+    ctx.lineWidth = Math.max(1, ISO_SCALE * 1.6);
+    for (let k = 0; k < 2; k++) {
+      const jx = (Math.random() - 0.5) * 2.5, jy = (Math.random() - 0.5) * 2.5;
+      ctx.beginPath();
+      ctx.moveTo(p1.x + jx, p1.y + jy);
+      ctx.lineTo(p2.x + jx, p2.y + jy);
+      ctx.lineTo(p3.x + jx, p3.y + jy);
+      ctx.lineTo(p4.x + jx, p4.y + jy);
+      ctx.closePath();
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.moveTo(p4.x, p4.y); ctx.lineTo(b4.x, b4.y);
+    ctx.lineTo(b3.x, b3.y);
+    ctx.moveTo(b3.x, b3.y); ctx.lineTo(b2.x, b2.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.stroke();
+  } else if (activeRender === 'neon') {
+    ctx.fillStyle = 'rgba(0,0,0,0.75)';
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = 'rgba(0,0,0,0.85)';
+    ctx.beginPath();
+    ctx.moveTo(p4.x, p4.y); ctx.lineTo(p3.x, p3.y);
+    ctx.lineTo(b3.x, b3.y); ctx.lineTo(b4.x, b4.y);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(p3.x, p3.y); ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(b2.x, b2.y); ctx.lineTo(b3.x, b3.y);
+    ctx.closePath(); ctx.fill();
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 14;
+    ctx.lineWidth = Math.max(2, ISO_SCALE * 3.5);
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y); ctx.closePath();
+    ctx.moveTo(p4.x, p4.y); ctx.lineTo(b4.x, b4.y);
+    ctx.lineTo(b3.x, b3.y);
+    ctx.moveTo(b3.x, b3.y); ctx.lineTo(b2.x, b2.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  if (alpha !== undefined) ctx.globalAlpha = 1;
+}
+function shade(hex, amount) {
+  const c = hex.replace('#', '');
+  const r = Math.max(0, Math.min(255, parseInt(c.substr(0,2),16) + amount*255));
+  const g = Math.max(0, Math.min(255, parseInt(c.substr(2,2),16) + amount*255));
+  const b = Math.max(0, Math.min(255, parseInt(c.substr(4,2),16) + amount*255));
+  return `rgb(${r|0},${g|0},${b|0})`;
+}
+function drawBackground() {
+  const s = ISO_SCALE / 0.55;
+  const buildings = [
+    { x: -320 * s, y: 200 * s, w: 120 * s, h: 260 * s },
+    { x: -180 * s, y: 260 * s, w:  90 * s, h: 200 * s },
+    { x:  200 * s, y: 180 * s, w: 140 * s, h: 300 * s },
+    { x:  340 * s, y: 240 * s, w: 100 * s, h: 240 * s },
+    { x: -400 * s, y: 300 * s, w:  70 * s, h: 180 * s }
+  ];
+  for (const b of buildings) {
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    const top = iso(b.x, b.y, b.h);
+    const bot = iso(b.x, b.y, 0);
+    ctx.fillRect(top.x - b.w/2, top.y, b.w, bot.y - top.y + 100);
+  }
+}
+let decorStars = null;
+function drawDecor() {
+  const p = BG_PALETTES[settings.bgIndex];
+  if (!p || !p.decor) return;
+  if (p.decor === 'stars') {
+    if (!decorStars) decorStars = Array.from({length:80}).map(() => ({
+      x: Math.random(), y: Math.random(), s: 0.5 + Math.random() * 1.5, a: 0.4 + Math.random() * 0.6
+    }));
+    ctx.save();
+    for (const s of decorStars) {
+      ctx.globalAlpha = s.a;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(s.x * W, s.y * H, s.s, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+function draw() {
+  let fromIdx = 0, toIdx = 0, t = 0;
+  if (settings.timeBg) {
+    const elapsed = (performance.now() - gameStartTime) / 1000;
+    const step = Math.floor(elapsed / 35);
+    fromIdx = (settings.bgIndex + step) % BG_PALETTES.length;
+    toIdx = (fromIdx + 1) % BG_PALETTES.length;
+    t = (elapsed % 35) / 35;
+    if (t > 1 - (5 / 35)) t = (t - (1 - 5 / 35)) / (5 / 35);
+    else t = 0;
+  } else {
+    fromIdx = settings.bgIndex; toIdx = settings.bgIndex; t = 0;
+  }
+  const topCol = lerpColor(BG_PALETTES[fromIdx].top, BG_PALETTES[toIdx].top, t);
+  const botCol = lerpColor(BG_PALETTES[fromIdx].bot, BG_PALETTES[toIdx].bot, t);
+  const grd = ctx.createLinearGradient(0, 0, 0, H);
+  grd.addColorStop(0, topCol);
+  grd.addColorStop(1, botCol);
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+  drawDecor();
+  drawBackground();
+  const camY = cameraOffsetY;
+  const sorted = [...blocks];
+  if (current && current.moving) sorted.push(current);
+  sorted.sort((a, b) => (a.z - camY) - (b.z - camY));
+  for (const b of sorted) drawBox(b.x, b.y, b.z - camY, b.sizeX, b.sizeY, b.color);
+  for (const p of fallingPieces) drawBox(p.x, p.y, p.z - camY, p.sizeX, p.sizeY, p.color, p.alpha);
+  for (const p of particles) {
+    ctx.globalAlpha = p.life;
+    const s = iso(p.x, p.y, p.z - camY);
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+  if (flashAlpha > 0) {
+    ctx.fillStyle = 'rgba(255,255,255,' + flashAlpha + ')';
+    ctx.fillRect(0, 0, W, H);
+    flashAlpha = Math.max(0, flashAlpha - 0.06);
+  }
+}
+function update() {
+  const speed = settings.mode === 'speed' ? currentSpeed : 3.5;
+  const limit = 400 * ISO_SCALE / 0.55;
+  if (!gameOver && current && current.moving) {
+    if (current.axis === 'x') current.x += speed * current.dir;
+    else current.y += speed * current.dir;
+    if (current.axis === 'x') {
+      if (current.x > limit) { current.x = limit; current.dir = -1; }
+      if (current.x < -limit) { current.x = -limit; current.dir = 1; }
+    } else {
+      if (current.y > limit) { current.y = limit; current.dir = -1; }
+      if (current.y < -limit) { current.y = -limit; current.dir = 1; }
+    }
+  }
+  for (let i = fallingPieces.length - 1; i >= 0; i--) {
+    const p = fallingPieces[i];
+    p.vy += 0.8; p.z -= p.vy;
+    if (p.axis === 'x') p.x += p.side * 0.5; else p.y += p.side * 0.5;
+    p.alpha -= 0.012;
+    if (p.alpha <= 0 || p.z < -800) fallingPieces.splice(i, 1);
+  }
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx * 0.3; p.y += p.vy * 0.3; p.z += p.vz * 0.3;
+    p.vz -= 0.3; p.life -= 0.02;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+}
+function loop(now) {
+  if (!now) now = performance.now();
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+startMenuBtn.addEventListener('click', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  startEl.classList.add('hidden');
+  onStartScreen = false;
+  gameStarted = true;
+  showMainMenu();
+});
+startMenuBtn.addEventListener('touchstart', (e) => {
+  e.preventDefault(); e.stopPropagation();
+  startEl.classList.add('hidden');
+  onStartScreen = false;
+  gameStarted = true;
+  showMainMenu();
+}, { passive: false });
+function handleGameInput(e) {
+  if (!playing) return;
+  if (gameOver) return;
+  if (gameoverEl.style.display === 'flex') return;
+  if (mainMenuEl.classList.contains('open')) return;
+  if (modeMenuEl.classList.contains('open')) return;
+  if (achievementsMenuEl.classList.contains('open')) return;
+  if (settingsMenuEl.classList.contains('open')) return;
+  if (changelogPanel.classList.contains('open')) return;
+  if (paletteOverlay.classList.contains('open')) return;
+  if (creditsOverlay.classList.contains('open')) return;
+  if (shopOverlay.classList.contains('open')) return;
+  if (confirmOverlay.classList.contains('open')) return;
+  if (e) e.preventDefault();
+  drop();
+}
+window.addEventListener('mousedown', handleGameInput);
+window.addEventListener('touchstart', handleGameInput, { passive: false });
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' || e.code === 'ArrowDown') handleGameInput(e);
+});
+window.addEventListener('beforeunload', () => {
+  if (playing && !gameOver && blocks && blocks.length) saveGame();
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && playing && !gameOver && blocks && blocks.length) saveGame();
+});
+
+loadSettings();
+loadAchievements();
+loadCoins();
+loadRenders();
+updateCoinsUI();
+updateMenuUI();
+applyLang();
+updateContinueBtn();
+
+(function preload() {
+  gameStartTime = performance.now();
+  blocks = []; current = null; cameraOffsetY = 0; flashAlpha = 0;
+  fallingPieces = []; particles = [];
+  requestAnimationFrame(loop);
+})();
